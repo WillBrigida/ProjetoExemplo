@@ -1,11 +1,10 @@
-using Api.Client;
-using Microsoft.AspNetCore.Components.Authorization;
+using Core;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Web;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddAuthorizationCore();
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+builder.RegisterServices();
+builder.Services.RegisterViewModels();
 
 await builder.Build().RunAsync();

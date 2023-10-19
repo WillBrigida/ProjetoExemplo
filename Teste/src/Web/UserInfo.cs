@@ -1,4 +1,4 @@
-namespace Api.Client
+namespace Web
 {
     public class UserInfo
     {

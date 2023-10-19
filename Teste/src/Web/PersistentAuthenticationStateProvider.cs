@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
-namespace Api.Client
+namespace Web
 {
     public class PersistentAuthenticationStateProvider(PersistentComponentState persistentState) : AuthenticationStateProvider
     {
