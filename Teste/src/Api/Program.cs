@@ -1,7 +1,6 @@
 using Api.Components;
 using Api.Data;
 using Api.Identity;
-using Core.Modules.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -33,10 +32,10 @@ namespace Api
             var jwtSettinsSection = builder.Configuration.GetSection("JWTSttings");
             var dbSettinsSection = builder.Configuration.GetSection("DBSettings");
 
-            builder.Services.Configure<JWTSettings>(jwtSettinsSection);
-            builder.Services.Configure<DBSettings>(dbSettinsSection);
+            builder.Services.Configure<Core.Modules.Models.JWTSettings>(jwtSettinsSection);
+            builder.Services.Configure<Core.Modules.Models.DBSettings>(dbSettinsSection);
 
-            var dbSettings = dbSettinsSection.Get<DBSettings>();
+            var dbSettings = dbSettinsSection.Get<Core.Modules.Models.DBSettings>();
 
             var host = dbSettings!.Host ?? "172.20.0.2";
             var port = dbSettings.Port ?? "3306";
@@ -66,6 +65,7 @@ namespace Api
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
+
             //builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>()
             //    .AddSignInManager()
