@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS AspNetRoleClaims (
   `ClaimValue` longtext,
   constraint PK_AspNetRoleClaims PRIMARY KEY (`Id`),
   UNIQUE KEY `Id` (`Id`),
-  KEY `UserId` (`UserId`)) 
+  KEY `RoleId` (`RoleId`)) 
   ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS AspNetUserClaims (
@@ -68,11 +68,12 @@ CREATE TABLE IF NOT EXISTS AspNetUserRoles (
 
 CREATE TABLE IF NOT EXISTS AspNetUserTokens (
 `UserId` varchar(450) NOT NULL,
-`LoginProvider` varchar(450) NOT NULL,
-`Name` varchar(450) NOT NULL,
+`LoginProvider` varchar(128) NOT NULL,
+`Name` varchar(128) NOT NULL,
 `Value` longtext,
 CONSTRAINT PK_AspNetUserTokens PRIMARY KEY (UserId, LoginProvider, Name)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 ALTER TABLE AspNetRoleClaims
 ADD CONSTRAINT `FK_AspNetRoleClaims_AspNetRoles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `AspNetRoles` (`Id`) ON DELETE CASCADE ON UPDATE NO ACTION;
