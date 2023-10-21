@@ -20,6 +20,8 @@ namespace Api
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents();
 
+            builder.Services.AddControllers();
+
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<UserAccessor>();
             builder.Services.AddScoped<IdentityRedirectManager>();
@@ -33,7 +35,8 @@ namespace Api
             //    options.UseSqlServer(connectionString));
             //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnectionMySQL") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var connectionString = Core.CoreHelpers.GetSection<Core.Modules.Models.ConnectionStrings>("ConnectionStrings").ConnectionMySQL;
+
             var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -67,6 +70,8 @@ namespace Api
             }
 
             app.UseHttpsRedirection();
+
+            app.MapControllers();
 
             app.UseStaticFiles();
             app.UseAntiforgery();

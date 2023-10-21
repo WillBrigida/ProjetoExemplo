@@ -1,6 +1,6 @@
 using Core;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Web;
+using Web.Modules.Base.Utils;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

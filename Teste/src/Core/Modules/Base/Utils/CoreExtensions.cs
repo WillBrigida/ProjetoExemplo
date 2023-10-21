@@ -23,6 +23,7 @@ namespace Core
 
         public static IServiceCollection RegisterViewModels(this IServiceCollection services)
         {
+
             //services.AddTransient<HomePageViewModel>();
             //services.AddTransient<LoginPageViewModel>();
             //services.AddTransient<RegisterPageViewModel>();

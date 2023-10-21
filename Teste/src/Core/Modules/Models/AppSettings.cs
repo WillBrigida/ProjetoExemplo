@@ -16,8 +16,10 @@
         public string? ValidAudience { get; set; }
     }
 
-    public class URISettings
+
+    public class ConnectionStrings
     {
-        public string? UriBase { get; set; }
+        public string? ConnectionSQLServer { get; set; }
+        public string? ConnectionMySQL { get; set; }
     }
 }
