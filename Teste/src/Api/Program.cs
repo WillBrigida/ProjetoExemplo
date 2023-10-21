@@ -28,32 +28,16 @@ namespace Api
             builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddIdentityCookies();
 
-
-            var jwtSettinsSection = builder.Configuration.GetSection("JWTSttings");
-            var dbSettinsSection = builder.Configuration.GetSection("DBSettings");
-
-            builder.Services.Configure<Core.Modules.Models.JWTSettings>(jwtSettinsSection);
-            builder.Services.Configure<Core.Modules.Models.DBSettings>(dbSettinsSection);
-
-            var dbSettings = dbSettinsSection.Get<Core.Modules.Models.DBSettings>();
-
-            var host = dbSettings!.Host ?? "172.20.0.2";
-            var port = dbSettings.Port ?? "3306";
-            var password = dbSettings.Password ?? "000000";
-            var dbName = dbSettings.Name ?? "TesteDB";
-
-            var connectionString = $"server={host};port={port};database={dbName};user=root;password={password}";
-
-            var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
-
-            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnectionSQLServer") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             //builder.Services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(connectionString));
             //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDbContext<ApplicationDbContext>(
-           dbContextOptions => dbContextOptions
-               .UseMySql(connectionString, serverVersion)
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnectionMySQL") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseMySql(connectionString, serverVersion)
                 // The following three options help with debugging, but should
                 // be changed or removed for production.
                 .LogTo(Console.WriteLine, LogLevel.Information)
@@ -65,11 +49,6 @@ namespace Api
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
-
-            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>()
-            //    .AddSignInManager()
-            //    .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();
 
