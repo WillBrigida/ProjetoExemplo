@@ -1,5 +1,4 @@
-﻿using Apps.Modules.Base.Utils;
-using Core;
+﻿using Core;
 using Microsoft.Extensions.Logging;
 
 namespace Apps
@@ -16,13 +15,20 @@ namespace Apps
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+#if IOS
+        builder.RegisterHandlersiOS();
 
+#elif ANDROID
+            builder.RegisterHandlersAndroid();
+#endif
             builder.RegisterServices();
             builder.Services.RegisterViewModels();
 
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
+            Core.CoreHelpers.ServiceProvider = builder.Services.BuildServiceProvider();
 
             return builder.Build();
         }

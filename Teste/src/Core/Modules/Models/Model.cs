@@ -2,7 +2,7 @@
 
 namespace Core.Modules.Models
 {
-    public class InputModel
+    public class RegisterInputModel
     {
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -30,7 +30,23 @@ namespace Core.Modules.Models
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+
+
         public string ConfirmPassword { get; set; } = null!;
+    }
+
+    public class LoginInputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = null!;
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = null!;
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; } = false;
     }
 
     public class SaveFile

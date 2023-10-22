@@ -4,6 +4,8 @@ namespace Core
 {
     public class CoreHelpers
     {
+        public static IServiceProvider? ServiceProvider { get; set; }
+
         public static string Base64Encode(string plainText)
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);

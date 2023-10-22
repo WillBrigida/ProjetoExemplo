@@ -44,7 +44,7 @@ public class ApiService : IApiService
 
             var result = JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), GetJsonSerializerOptions());
 
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{result}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
             return result ?? throw new Exception();
         }
         catch (Exception ex)
@@ -77,7 +77,7 @@ public class ApiService : IApiService
             Console.WriteLine(response.Content.ReadAsStringAsync().Result);
 
 
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{result}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
             Console.WriteLine($"<<<== /n{result}");
 
             return result ?? throw new Exception();
@@ -113,7 +113,7 @@ public class ApiService : IApiService
 
             var result = JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), GetJsonSerializerOptions());
 
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{result}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
             Console.WriteLine($"<<<== /n{result}");
 
             return result ?? throw new Exception();
@@ -141,7 +141,7 @@ public class ApiService : IApiService
 
             var result = JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), GetJsonSerializerOptions());
 
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{result}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
 
             return result ?? throw new Exception();
         }
