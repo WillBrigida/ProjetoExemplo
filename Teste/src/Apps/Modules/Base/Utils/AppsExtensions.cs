@@ -1,6 +1,5 @@
 ﻿using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
-
 #if ANDROID
 using Android.Content.Res;
 #elif IOS || MACCATALYST
@@ -20,7 +19,6 @@ namespace Apps
         }
 
 #if ANDROID
-
         public static MauiAppBuilder RegisterHandlersAndroid(this MauiAppBuilder builder)
         {
             EntryHandler.Mapper.AppendToMapping("NoUnderline", (h, v)
@@ -98,7 +96,6 @@ namespace Apps
             return builder;
         }
 #endif
-
         public static MauiAppBuilder RegisterServices(this MauiAppBuilder builder)
         {
             var baseUri = Core.CoreHelpers.GetSection("BaseUri");
@@ -111,10 +108,8 @@ namespace Apps
             builder.Services.AddScoped(sp => new HttpClient(GetPlatformMessageHandler()) { BaseAddress = new Uri(baseUri) });
 #else
             builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(baseUri) });
-
 #endif
 #endif
-
             builder.Services.AddSingleton<Core.Modules.Services.IApiService, Core.Modules.Services.ApiService>();
 
             builder.Services.AddSingleton<Core.Modules.Services.INavigationService, Modules.Services.NavigationService>();
@@ -127,10 +122,6 @@ namespace Apps
 
             return builder;
         }
-
-
-
-
     }
 }
 

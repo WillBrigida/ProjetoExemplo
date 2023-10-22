@@ -49,6 +49,13 @@ namespace Core.Modules.Models
         public bool RememberMe { get; set; } = false;
     }
 
+    public class ConfirmEmailModel
+    {
+        public string? Email { get; set; }
+        public string? UserId { get; set; }
+        public string? Code { get; set; }
+    }
+
     public class SaveFile
     {
         public List<FileData>? Files { get; set; }

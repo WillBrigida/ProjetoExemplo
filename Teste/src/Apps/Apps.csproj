@@ -84,6 +84,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Modules\Views\RegisterConfirmationPage.xaml.cs">
+	    <DependentUpon>RegisterConfirmationPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Modules\Views\RegisterConfirmationPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Modules\Views\HomePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -12,23 +12,23 @@
             Spacing="10"
             VerticalOptions="Center">
 
-            <Entry Placeholder="Email" Text="{Binding InputModel.Email}" />
+            <Entry Placeholder="Email" Text="{Binding RegisterInputModel.Email, Mode=TwoWay}" />
 
             <Entry
                 IsPassword="True"
                 Placeholder="Senha"
-                Text="{Binding InputModel.Password}" />
+                Text="{Binding RegisterInputModel.Password, Mode=TwoWay}" />
 
             <Entry
                 IsPassword="True"
                 Placeholder="Confirmar Senha"
-                Text="{Binding InputModel.ConfirmPassword}" />
+                Text="{Binding RegisterInputModel.ConfirmPassword, Mode=TwoWay}" />
 
 
             <Button
                 BackgroundColor="Blue"
-                Command="{Binding LoginCommand}"
-                Text="Login" />
+                Command="{Binding RegisterCommand}"
+                Text="Cadastrar" />
 
             <!--<Button
         BackgroundColor="Red"

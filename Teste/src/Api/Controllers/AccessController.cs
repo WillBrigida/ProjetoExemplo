@@ -3,6 +3,7 @@ using Api.Data;
 using Core.Modules.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
@@ -17,6 +18,7 @@ namespace Api.Controllers
         readonly IUserStore<ApplicationUser> _userStore;
         SignInManager<ApplicationUser> _signInManager;
         readonly ILogger<Register> _logger;
+        readonly IEmailSender _emailSender;
 
         IEnumerable<IdentityError>? identityErrors;
         string? Message => identityErrors is null ? null : "Error: " + string.Join(", ", identityErrors.Select(error => error.Description));
@@ -24,12 +26,14 @@ namespace Api.Controllers
         public AccessController(UserManager<ApplicationUser> userManager,
                                 IUserStore<ApplicationUser> userStore,
                                 SignInManager<ApplicationUser> signInManager,
-                                ILogger<Register> logger)
+                                ILogger<Register> logger,
+                                IEmailSender emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
             _logger = logger;
             _signInManager = signInManager;
+            _emailSender = emailSender;
         }
 
         [HttpPost("register")]
@@ -53,6 +57,12 @@ namespace Api.Controllers
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
+                    ConfirmEmailModel confirmEmail = new()
+                    {
+                        UserId = userId,
+                        Code = code
+                    };
+
                     //var callbackUrl = NavigationManager.GetUriWithQueryParameters(
                     //NavigationManager.ToAbsoluteUri("/Account/ConfirmEmail").AbsoluteUri,
                     //    new Dictionary<string, object?> { { "userId", userId }, { "code", code }, { "returnUrl", ReturnUrl } });
@@ -60,8 +70,7 @@ namespace Api.Controllers
                     //await EmailSender.SendEmailAsync(Input.Email, "Confirm your email",
                     //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-
-                    return Ok(new GenericResponse<ApplicationUser> { Successful = true, /*Data = user,*/ StatusCode = Ok().StatusCode, Message = inputModel.Email });
+                    return Ok(new GenericResponse<ConfirmEmailModel> { Successful = true, Data = confirmEmail, StatusCode = Ok().StatusCode, Message = inputModel.Email });
 
                     //if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     //{
@@ -79,6 +88,43 @@ namespace Api.Controllers
                 {
                     identityErrors = result.Errors;
                     return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = Message, Error = identityErrors.ToString()! });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
+            }
+        }
+
+        [HttpPost("registerconfirmation")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterConfirmation([FromBody] ConfirmEmailModel confirmEmailModel)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(confirmEmailModel.Email!);
+                if (user == null)
+                {
+                    // Need a way to trigger a 404 from Blazor: https://github.com/dotnet/aspnetcore/issues/45654
+                    //statusMessage = $"Error finding user for unspecified email";
+                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error finding user for unspecified email" });
+
+                }
+                else if (_emailSender is NoOpEmailSender)
+                {
+                    // Once you add a real email sender, you should remove this code that lets you confirm the account
+
+                    var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmEmailModel.Code));
+                    var result = await _userManager.ConfirmEmailAsync(user, code);
+                    if (!result.Succeeded)
+                        return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error confirming your email." });
+
+                    return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Sucesso!" });
+                }
+                else
+                {
+                    return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Email já confirmado!" });
                 }
 
             }
