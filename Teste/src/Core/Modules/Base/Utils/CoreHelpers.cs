@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Core.Modules.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Core
 {
     public class CoreHelpers
     {
+        public static UserDTO? PrincipalUser { get; internal set; }
+
         public static IServiceProvider? ServiceProvider { get; set; }
 
         public static string Base64Encode(string plainText)

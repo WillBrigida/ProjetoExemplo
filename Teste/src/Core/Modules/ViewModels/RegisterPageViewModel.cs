@@ -17,13 +17,23 @@ namespace Core.Modules.ViewModels
         [ObservableProperty]
         private RegisterInputModel? _registerInputModel = new();
 
+        private string? Token { get; set; }
+
+        [ObservableProperty]
+        private bool _registerNewPassword;
+
         public RegisterPageViewModel() { }
 
-        public RegisterPageViewModel(IApiService apiService, IAlertService? alertService, INavigationService navigationService)
+        public RegisterPageViewModel(IApiService apiService, IAlertService? alertService, INavigationService? navigationService)
         {
             _apiService = apiService;
             _alertService = alertService;
             _navigationService = navigationService;
+        }
+
+        public override Task OnAppearingAsync()
+        {
+            return base.OnAppearingAsync();
         }
 
         [RelayCommand]
@@ -65,6 +75,52 @@ namespace Core.Modules.ViewModels
 
                 await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
                 await _navigationService!.NavigateTo(nameof(HomePageViewModel));
+            }
+
+            finally { IsBusy = false; }
+        }
+
+        [RelayCommand]
+        async Task OnResetPassword()
+        {
+            if (RegisterNewPassword)
+            {
+                await OnRegisterNewPassword();
+                return;
+            }
+
+            try
+            {
+                IsBusy = true;
+                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ROTA_ACESSO}/resetpassword", RegisterInputModel!.Email);
+                if (!response.Successful)
+                {
+                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
+                    return;
+                }
+
+                Token = response.Data!;
+                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+                RegisterNewPassword = true;
+            }
+
+            finally { IsBusy = false; }
+        }
+
+        async Task OnRegisterNewPassword()
+        {
+            try
+            {
+                IsBusy = true;
+                var response = await _apiService!.PostAsync<GenericResponse>($"{ROTA_ACESSO}/newpassword/{Token}", RegisterInputModel!);
+                if (!response.Successful)
+                {
+                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
+                    return;
+                }
+
+                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+                await _navigationService!.NavigateTo("..");
             }
 
             finally { IsBusy = false; }

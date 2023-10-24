@@ -98,11 +98,16 @@ namespace Apps
 #endif
         public static MauiAppBuilder RegisterServices(this MauiAppBuilder builder)
         {
-            var baseUri = Core.CoreHelpers.GetSection("BaseUri");
+            var baseUri = Core.CoreHelpers.GetSection("BaseUri") ?? throw new ArgumentNullException("Valor não encontrado. Verifique arquivo appsettings.json");
+
+            if (baseUri.Contains("localhost"))
+            {
+                var host = baseUri.Split("//")[1];
+                var port = host.Contains(':') ? baseUri.Split(':')[2] : string.Empty;
+                baseUri = AppsHelpers.IsDroid ? $"https://10.0.2.2:{port}" : baseUri;
+            }
+
 #if DEBUG
-            var host = baseUri.Split("//")[1];
-            var port = host.Contains(':') ? baseUri.Split(':')[2] : string.Empty;
-            baseUri = AppsHelpers.IsDroid ? $"https://10.0.2.2:{port}" : baseUri;
 
 #if ANDROID
             builder.Services.AddScoped(sp => new HttpClient(GetPlatformMessageHandler()) { BaseAddress = new Uri(baseUri) });
@@ -113,6 +118,7 @@ namespace Apps
             builder.Services.AddSingleton<Core.Modules.Services.IApiService, Core.Modules.Services.ApiService>();
 
             builder.Services.AddSingleton<Core.Modules.Services.INavigationService, Modules.Services.NavigationService>();
+            builder.Services.AddSingleton<Core.Modules.Services.ILocalStorageService, Modules.Services.LocalStorageService>();
             //builder.Services.AddSingleton<Core.IDeviceInfoService, Modules.Services.DeviceInfoService>();
             builder.Services.AddSingleton<Core.Modules.Services.IAlertService, Modules.Services.AlertService>();
             //builder.Services.AddSingleton<Core.Modules.Services.IFileUploadService, Modules.Services.FileUploadService>();

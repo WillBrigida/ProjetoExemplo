@@ -6,6 +6,9 @@
     xmlns:views="clr-namespace:Apps.Modules.Views"
     Title="HomePage">
     <VerticalStackLayout Padding="15" VerticalOptions="Center">
+
+        <Label Text="{Binding PrincipalUser.UserID}" />
+        <Label Text="{Binding PrincipalUser.Email}" />
         <Button
             BackgroundColor="Red"
             Command="{Binding LogoutCommand}"

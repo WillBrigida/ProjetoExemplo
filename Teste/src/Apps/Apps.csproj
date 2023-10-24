@@ -90,6 +90,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Modules\Views\ForgotPasswordPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Modules\Views\RegisterConfirmationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

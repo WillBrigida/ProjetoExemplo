@@ -56,6 +56,12 @@ namespace Core.Modules.Models
         public string? Code { get; set; }
     }
 
+    public class UserDTO
+    {
+        public string? UserID { get; set; }
+        public string? Email { get; set; }
+    }
+
     public class SaveFile
     {
         public List<FileData>? Files { get; set; }

@@ -24,12 +24,26 @@
             Command="{Binding LoginCommand, Mode=TwoWay}"
             Text="Login" />
 
-        <Button
-            BackgroundColor="Transparent"
-            Command="{Binding NavToRegisterPageCommand}"
-            Text="Cadastrar"
-            TextColor="Gray"
-            VerticalOptions="End" />
+        <HorizontalStackLayout HorizontalOptions="Center" Spacing="7">
+
+            <Button
+                BackgroundColor="Transparent"
+                Command="{Binding NavToRegisterPageCommand}"
+                Text="Cadastrar usuário"
+                TextColor="Gray"
+                VerticalOptions="End" />
+
+            <Label Text="|" VerticalOptions="Center" />
+
+            <Button
+                BackgroundColor="Transparent"
+                Command="{Binding NavToForgotPasswordPageCommand}"
+                Text="Esqueci a senha"
+                TextColor="Gray"
+                VerticalOptions="End" />
+
+        </HorizontalStackLayout>
+
 
     </VerticalStackLayout>
 </views:MyContentPage>

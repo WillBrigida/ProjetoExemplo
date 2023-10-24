@@ -18,10 +18,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0-rc.1.23419.6" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0-beta.1" />
 	  <!--cORRIGE PROBLEMA COM LOGOUT - DEVE SER EXCLUIDA NA VERSÃO FINAL-->
-	  <!--<PackageReference Include="Microsoft.Net.Compilers.Razor.Toolset" Version="7.0.0-preview.23512.5">
+	  <PackageReference Include="Microsoft.Net.Compilers.Razor.Toolset" Version="7.0.0-preview.23512.5">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-	  </PackageReference>-->
+	  </PackageReference>
   </ItemGroup>
 
 </Project>

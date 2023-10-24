@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Core.Modules.Base;
 using Core.Modules.Models;
 using Core.Modules.Services;
+using System.Text.Json;
 
 namespace Core.Modules.ViewModels
 {
@@ -14,17 +15,30 @@ namespace Core.Modules.ViewModels
         private readonly IApiService? _apiService;
         private readonly IAlertService? _alertService;
         private readonly IAuthService? _authService;
+        private readonly ILocalStorageService? _localStorageService;
 
         [ObservableProperty]
         private LoginInputModel? _inputMode = new();
 
+        [ObservableProperty]
+        private UserDTO? _principalUser = new();
+
         public HomePageViewModel() { }
 
-        public HomePageViewModel(IApiService apiService, IAlertService? alertService, INavigationService navigationService)
+        public HomePageViewModel(IApiService apiService, IAlertService? alertService, INavigationService navigationService, ILocalStorageService? localStorageService)
         {
             _apiService = apiService;
             _alertService = alertService;
             _navigationService = navigationService;
+            _localStorageService = localStorageService;
+        }
+
+        public override Task OnAppearingAsync()
+        {
+            var json = _localStorageService!.Get("PrincipalUser", "");
+
+            PrincipalUser = JsonSerializer.Deserialize<UserDTO>(json.ToString());
+            return base.OnAppearingAsync();
         }
 
         [RelayCommand]
@@ -41,6 +55,7 @@ namespace Core.Modules.ViewModels
                     return;
                 }
 
+                _localStorageService!.Remove("PrincipalUser");
                 await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
                 await _navigationService!.NavigateTo(nameof(LoginPageViewModel));
             }
