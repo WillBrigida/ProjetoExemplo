@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Core.Modules.Base;
 using Core.Modules.Models;
 using Core.Modules.Services;
@@ -34,96 +33,6 @@ namespace Core.Modules.ViewModels
         public override Task OnAppearingAsync()
         {
             return base.OnAppearingAsync();
-        }
-
-        [RelayCommand]
-        async Task OnRegister()
-        {
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<ConfirmEmailModel>>($"{ROTA_ACESSO}/register", RegisterInputModel!);
-                if (!response.Successful)
-                {
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}", "Ok");
-                    return;
-                }
-
-                var confirmEmailModel = response.Data;
-                confirmEmailModel!.Email = RegisterInputModel!.Email;
-
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                await _navigationService!.NavigateTo("RegisterConfirmationPage", "ConfirmEmailModel", confirmEmailModel);
-            }
-
-            finally { IsBusy = false; }
-        }
-
-        [RelayCommand]
-        async Task OnRegisterConfirmation()
-        {
-            ConfirmEmailModel confirmEmailModel = _navigationService!.GetNavigationParameter<ConfirmEmailModel>("ConfirmEmailModel");
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse>($"{ROTA_ACESSO}/registerconfirmation", confirmEmailModel);
-                if (!response.Successful)
-                {
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}", "Ok");
-                    return;
-                }
-
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                await _navigationService!.NavigateTo(nameof(HomePageViewModel));
-            }
-
-            finally { IsBusy = false; }
-        }
-
-        [RelayCommand]
-        async Task OnResetPassword()
-        {
-            if (RegisterNewPassword)
-            {
-                await OnRegisterNewPassword();
-                return;
-            }
-
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ROTA_ACESSO}/resetpassword", RegisterInputModel!.Email);
-                if (!response.Successful)
-                {
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
-                    return;
-                }
-
-                Token = response.Data!;
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                RegisterNewPassword = true;
-            }
-
-            finally { IsBusy = false; }
-        }
-
-        async Task OnRegisterNewPassword()
-        {
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse>($"{ROTA_ACESSO}/newpassword/{Token}", RegisterInputModel!);
-                if (!response.Successful)
-                {
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
-                    return;
-                }
-
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                await _navigationService!.NavigateTo("..");
-            }
-
-            finally { IsBusy = false; }
         }
     }
 

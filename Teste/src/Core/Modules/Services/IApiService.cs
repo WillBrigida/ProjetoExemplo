@@ -44,7 +44,7 @@ public class ApiService : IApiService
 
             var result = JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), GetJsonSerializerOptions());
 
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync().Result}");
             return result ?? throw new Exception();
         }
         catch (Exception ex)
@@ -66,7 +66,6 @@ public class ApiService : IApiService
         {
             string json = JsonSerializer.Serialize(obj, GetJsonSerializerOptions());
             System.Diagnostics.Debug.WriteLine($"==>>> /n{json}");
-            Console.WriteLine($"==>>> /n{json}");
 
             var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 
@@ -76,9 +75,7 @@ public class ApiService : IApiService
             var result = JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), GetJsonSerializerOptions());
             Console.WriteLine(response.Content.ReadAsStringAsync().Result);
 
-
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
-            Console.WriteLine($"<<<== /n{result}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync().Result}");
 
             return result ?? throw new Exception();
         }
@@ -104,7 +101,6 @@ public class ApiService : IApiService
 
             var json = JsonSerializer.Serialize(obj, GetJsonSerializerOptions());
             System.Diagnostics.Debug.WriteLine($"==>>> /n{json}");
-            Console.WriteLine($"==>>> /n{json}");
 
             var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 
@@ -113,8 +109,7 @@ public class ApiService : IApiService
 
             var result = JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), GetJsonSerializerOptions());
 
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
-            Console.WriteLine($"<<<== /n{result}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync().Result}");
 
             return result ?? throw new Exception();
 
@@ -141,7 +136,7 @@ public class ApiService : IApiService
 
             var result = JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), GetJsonSerializerOptions());
 
-            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync()}");
+            System.Diagnostics.Debug.WriteLine($"<<<== /n{response.Content.ReadAsStringAsync().Result}");
 
             return result ?? throw new Exception();
         }

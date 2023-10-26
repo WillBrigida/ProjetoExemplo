@@ -6,6 +6,6 @@ public partial class LoginPage : MyContentPage
     {
         InitializeComponent();
         this.BindingContext = VM =
-                Core.CoreHelpers.ServiceProvider.GetRequiredService<Core.Modules.ViewModels.LoginPageViewModel>();
+                Core.CoreHelpers.ServiceProvider.GetRequiredService<Core.Modules.ViewModels.AccountPageViewModel>();
     }
 }

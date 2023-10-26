@@ -84,16 +84,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Modules\Views\RegisterConfirmationPage.xaml.cs">
-	    <DependentUpon>RegisterConfirmationPage.xaml</DependentUpon>
+	  <Compile Update="Modules\Views\ConfirmationPage.xaml.cs">
+	    <DependentUpon>ConfirmationPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Modules\Views\AccountManagerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Modules\Views\ForgotPasswordPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Modules\Views\RegisterConfirmationPage.xaml">
+	  <MauiXaml Update="Modules\Views\ConfirmationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Modules\Views\HomePage.xaml">

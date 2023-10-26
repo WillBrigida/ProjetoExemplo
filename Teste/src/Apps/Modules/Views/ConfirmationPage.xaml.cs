@@ -1,16 +1,14 @@
 namespace Apps.Modules.Views;
 
-public partial class ForgotPasswordPage : MyContentPage
+public partial class ConfirmationPage : MyContentPage
 {
-    public ForgotPasswordPage()
+    public ConfirmationPage()
     {
         InitializeComponent();
         this.BindingContext = VM =
             Core.CoreHelpers.ServiceProvider.GetRequiredService<Core.Modules.ViewModels.AccountPageViewModel>();
     }
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-    }
+    protected override void OnAppearing() => base.OnAppearing();
+
 }

@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
+@using Api.Services
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Identity.UI.Services
 @using Microsoft.AspNetCore.WebUtilities
@@ -14,6 +15,7 @@
 @inject IEmailSender EmailSender
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject IAccountService AccountService;
 
 <PageTitle>Manage email</PageTitle>
 
@@ -80,15 +82,20 @@
         if (Input.NewEmail != _email)
         {
             var userId = await UserManager.GetUserIdAsync(_user);
-            var code = await UserManager.GenerateChangeEmailTokenAsync(_user, Input.NewEmail!);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            // var code = await UserManager.GenerateChangeEmailTokenAsync(_user, Input.NewEmail!);
+            // code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+            var code = await AccountService.ChangeEmail(_user, Input.NewEmail!);
             var callbackUrl = NavigationManager.GetUriWithQueryParameters(
                 $"{NavigationManager.BaseUri}Account/ConfirmEmailChange",
                 new Dictionary<string, object?> { { "userId", userId }, { "email", Input.NewEmail }, { "code", code } });
-            await EmailSender.SendEmailAsync(
+            
+                var message = HtmlEncoder.Default.Encode(callbackUrl);
+
+                await EmailSender.SendEmailAsync(
                 Input.NewEmail!,
                 "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            $"Please confirm your account by <a href='{message}'>clicking here</a>.");
 
             RedirectManager.RedirectToCurrentPageWithStatus("Confirmation link to change email sent. Please check your email.");
             return;

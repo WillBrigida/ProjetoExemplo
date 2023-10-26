@@ -9,7 +9,7 @@ namespace Core.Modules.ViewModels
 {
     public partial class HomePageViewModel : BaseViewModel
     {
-        const string ROTA_ACESSO = "api/v1/Access";
+        const string ACCOUNT_ROUTE = "api/v1/Account";
 
         private readonly INavigationService? _navigationService;
         private readonly IApiService? _apiService;
@@ -47,7 +47,7 @@ namespace Core.Modules.ViewModels
             try
             {
                 IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse>($"{ROTA_ACESSO}/logout", null);
+                var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/logout", null);
                 if (!response.Successful)
                 {
                     //Logica de erro
@@ -65,6 +65,38 @@ namespace Core.Modules.ViewModels
             //await _authService!.AuthLogout();
             //_apiService!.CleanDefaultRequestHeaders();
             //await _navigationService!.NavigateTo("LoginPage");
+        }
+
+        [RelayCommand]
+        async Task OnChangeEmail()
+        {
+            var userId = CoreHelpers.PrincipalUser!.UserID;
+
+            try
+            {
+                IsBusy = true;
+                var response = await _apiService!.PostAsync<GenericResponse<ConfirmEmailModel>>($"{ACCOUNT_ROUTE}/change-email{userId}", PrincipalUser!.Email!);
+                if (!response.Successful)
+                {
+                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
+                    return;
+                }
+
+                var html =
+                    $"""
+                    <![CDATA[
+                        <p>
+                            {response!.Data!.HtmlMessage}
+                        </p>
+                    ]]>
+                    """;
+
+                await _navigationService!.NavigateTo("RegisterConfirmationPage", "HtmlMessage", html);
+
+                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+            }
+
+            finally { IsBusy = false; }
         }
     }
 }

@@ -14,8 +14,9 @@ using System.Text.Encodings.Web;
 namespace Api.Controllers
 {
     [Microsoft.AspNetCore.Mvc.Route("api/v1/[controller]")]
+
     [ApiController]
-    public class AccessController : ControllerBase
+    public class AccountController : ControllerBase
     {
         readonly UserManager<ApplicationUser> _userManager;
         readonly IUserStore<ApplicationUser> _userStore;
@@ -25,11 +26,10 @@ namespace Api.Controllers
         readonly IAccountService _accountService;
         readonly NavigationManager _navigationManager;
 
-
         IEnumerable<IdentityError>? identityErrors;
         string? Message => identityErrors is null ? null : "Error: " + string.Join(", ", identityErrors.Select(error => error.Description));
 
-        public AccessController(UserManager<ApplicationUser> userManager,
+        public AccountController(UserManager<ApplicationUser> userManager,
                                 IUserStore<ApplicationUser> userStore,
                                 SignInManager<ApplicationUser> signInManager,
                                 ILogger<Register> logger,
@@ -61,16 +61,17 @@ namespace Api.Controllers
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    var callbackUrl = await _accountService.Register(user);
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    //_logger.LogInformation("User created a new account with password.");
+
+                    //var userId = await _userManager.GetUserIdAsync(user);
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
                     ConfirmEmailModel confirmEmail = new()
                     {
-                        UserId = userId,
-                        Token = code
+                        HtmlMessage = HtmlEncoder.Default.Encode(callbackUrl)
                     };
 
                     //var callbackUrl = NavigationManager.GetUriWithQueryParameters(
@@ -217,7 +218,55 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost("resetpassword")]
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+                if (user is null || !isEmailConfirmed)
+                {
+                    // Don't reveal that the user does not exist or is not confirmed
+                    var message = user is null ? "Usuário não encontrado" : (!isEmailConfirmed ? "Email foi enviado porém não confirmado" : "Errro desconhecido");
+
+                    //Email foi enviado porém não confirmadoo. Orientar a verificar email. 
+                    return Ok(new GenericResponse<string> { Successful = true, StatusCode = Ok().StatusCode, Message = $"{message}" }); ;
+                }
+
+                //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                //var callbackUrl = _navigationManager.GetUriWithQueryParameters($"http://10.0.2.2:5225/Account/ResetPassword",
+                //    new Dictionary<string, object?> { { "code", code } });
+
+                var callbackUrl = await _accountService.ForgotPassword(user, email);
+                var htmlMessage = HtmlEncoder.Default.Encode(callbackUrl);
+
+                ConfirmEmailModel confirmEmailModel = new()
+                {
+                    UserId = user.Id,
+                    Email = email,
+                    Token = "",
+                    HtmlMessage = htmlMessage
+                };
+
+                //enviar email
+                //    await EmailSender.SendEmailAsync(
+                //Input.Email,
+                //"Reset Password",
+                //$"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                return Ok(new GenericResponse<ConfirmEmailModel> { Successful = true, Data = confirmEmailModel, StatusCode = Ok().StatusCode, Message = "Verifique sua caixa de email!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
+            }
+        }
+
+
+        [HttpPost("reset-password")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] string email)
         {
@@ -228,17 +277,27 @@ namespace Api.Controllers
                 if (user is null || !isEmailConfirmed)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    //RedirectManager.RedirectTo("/Account/ForgotPasswordConfirmation");
-
                     var message = user is null ? "Usuário não encontrado" : (!isEmailConfirmed ? "Email foi enviado porém não confirmado" : "Errro desconhecido");
 
                     //Email foi enviado porém não confirmadoo. Orientar a verificar email. 
-
                     return Ok(new GenericResponse<string> { Successful = true, StatusCode = Ok().StatusCode, Message = $"{message}" }); ;
                 }
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                var callbackUrl = _navigationManager.GetUriWithQueryParameters($"http://10.0.2.2:5225/Account/ResetPassword",
+                    new Dictionary<string, object?> { { "code", code } });
+
+                var htmlMessage = HtmlEncoder.Default.Encode(callbackUrl);
+
+                ConfirmEmailModel confirmEmailModel = new()
+                {
+                    UserId = user.Id,
+                    Email = email,
+                    Token = code,
+                    HtmlMessage = htmlMessage
+                };
 
                 //enviar email
                 //    await EmailSender.SendEmailAsync(
@@ -246,13 +305,36 @@ namespace Api.Controllers
                 //"Reset Password",
                 //$"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                return Ok(new GenericResponse<string> { Successful = true, Data = code, StatusCode = Ok().StatusCode, Message = "Verifique sua caixa de email!" });
+                return Ok(new GenericResponse<ConfirmEmailModel> { Successful = true, Data = confirmEmailModel, StatusCode = Ok().StatusCode, Message = "Verifique sua caixa de email!" });
 
             }
             catch (Exception ex)
             {
                 return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
             }
+        }
+
+        [HttpGet("confirm-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string? userId, string? code)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId!);
+                code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+                var result = await _userManager.ConfirmEmailAsync(user, code);
+
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("Email validado");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Ok();
         }
 
         [HttpPost("newpassword/{token}")]

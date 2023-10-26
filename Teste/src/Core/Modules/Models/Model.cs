@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommunityToolkit.Mvvm.Messaging.Messages;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Modules.Models
 {
@@ -49,11 +50,20 @@ namespace Core.Modules.Models
         public bool RememberMe { get; set; } = false;
     }
 
+    public class NewEmailInputModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "New email")]
+        public string? NewEmail { get; set; }
+    }
+
     public class ConfirmEmailModel
     {
         public string? Email { get; set; }
         public string? UserId { get; set; }
-        public string? Code { get; set; }
+        public string? Token { get; set; }
+        public string? HtmlMessage { get; set; }
     }
 
     public class UserDTO
@@ -73,5 +83,13 @@ namespace Core.Modules.Models
         public string? FileType { get; set; }
         public long Size { get; set; }
 
+    }
+
+    public class NotificationItemMessage : ValueChangedMessage<String>
+    {
+        public NotificationItemMessage(string value) : base(value)
+        {
+
+        }
     }
 }

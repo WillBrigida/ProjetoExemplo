@@ -1,31 +1,52 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <views:MyContentPage
-    x:Class="Apps.Modules.Views.RegisterConfirmationPage"
+    x:Class="Apps.Modules.Views.ConfirmationPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:Apps.Modules.Views"
-    Title="RegisterConfirmationPage"
+    Title="ConfirmationPage"
     Shell.PresentationMode="ModalAnimated">
     <VerticalStackLayout
         Padding="15"
         Spacing="10"
         VerticalOptions="Center">
 
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Click " />
+                    <Span
+                        Text="AQUI"
+                        TextColor="Blue"
+                        TextDecorations="Underline">
+                        <Span.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding RegisterConfirmationCommand}" CommandParameter="{Binding HtmlMessage}" />
+                        </Span.GestureRecognizers>
+                    </Span>
+                    <Span Text=" Para validar seu email." />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+
         <Label
             HorizontalOptions="Center"
+            IsVisible="False"
+            Text="{Binding HtmlMessage}"
             TextType="Html"
             VerticalOptions="Center">
-            <![CDATA[
+            <!--<![CDATA[
                 <p>
                     This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
                     Normally this would be emailed:
                 </p>
-            ]]>
+            ]]>-->
         </Label>
 
         <Button
             BackgroundColor="Transparent"
             Command="{Binding RegisterConfirmationCommand}"
+            IsVisible="False"
             Text="Click here to confirm your account"
             TextColor="Gray"
             VerticalOptions="End" />

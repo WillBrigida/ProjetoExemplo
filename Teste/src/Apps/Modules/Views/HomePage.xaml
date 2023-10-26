@@ -9,6 +9,12 @@
 
         <Label Text="{Binding PrincipalUser.UserID}" />
         <Label Text="{Binding PrincipalUser.Email}" />
+
+        <Button
+            BackgroundColor="Blue"
+            Command="{Binding ChangeEmailCommand}"
+            Text="Mudar Email" />
+
         <Button
             BackgroundColor="Red"
             Command="{Binding LogoutCommand}"

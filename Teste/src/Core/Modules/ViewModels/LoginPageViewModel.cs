@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Core.Modules.Base;
 using Core.Modules.Models;
 using Core.Modules.Services;
-using System.Text.Json;
 
 namespace Core.Modules.ViewModels
 {
@@ -33,43 +31,6 @@ namespace Core.Modules.ViewModels
             _localStorageService = localStorageService;
         }
 
-        [RelayCommand]
-        async Task OnLogin()
-        {
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<UserDTO>>($"{ROTA_ACESSO}/login", LoginInputModel!);
-                if (!response.Successful)
-                {
-                    //Logica de erro
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
-                    return;
-                }
-
-                var json = JsonSerializer.Serialize(response.Data);
-                _localStorageService!.Set("PrincipalUser", json);
-
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                await _navigationService!.NavigateTo(nameof(HomePageViewModel));
-
-            }
-
-            finally { IsBusy = false; }
-        }
-
-
-        [RelayCommand]
-        async Task OnNavToRegisterPage()
-        {
-            await _navigationService!.NavigateTo(nameof(RegisterPageViewModel));
-        }
-
-        [RelayCommand]
-        async Task OnNavToForgotPasswordPage()
-        {
-            await _navigationService!.NavigateTo("ForgotPasswordPage");
-        }
     }
 
     public class LoginModel : ObservableObject

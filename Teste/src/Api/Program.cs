@@ -1,6 +1,7 @@
 using Api.Components;
 using Api.Data;
 using Api.Identity;
+using Api.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -26,6 +27,7 @@ namespace Api
             builder.Services.AddScoped<UserAccessor>();
             builder.Services.AddScoped<IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddIdentityCookies();

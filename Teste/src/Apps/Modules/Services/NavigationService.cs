@@ -31,34 +31,25 @@ namespace Apps.Modules.Services
             await Nav(viewModelName, animate);
         }
 
-        //public static Dictionary<string, Popup> PopupPages { get; set; } = new()
-        //{
-        //    { "HistoricPopupPage", new Apps.Modules.Historic.HistoricPopupPage()},
-        //    { "IncludeMovimentPopupPage", new Apps.Modules.IncludeMoviment.IncludeMovimentPopupPage()},
-        //};
-
         private async Task Nav(string viewModelName, bool animate)
         {
-            bool initPage = viewModelName.Contains("Home") || viewModelName.Contains("Main") || viewModelName.Contains("Menu")
-            || viewModelName.Contains("Root");
-            bool currentPage = App.Current.MainPage.ToString().Contains("Login") || App.Current.MainPage.ToString().Contains("AppShell");
+            bool initPage = viewModelName.Contains("Home") ||
+                            viewModelName.Contains("Main") ||
+                            viewModelName.Contains("Menu") ||
+                            viewModelName.Contains("Root") ||
+                            viewModelName.Contains("Login");
 
-            if (viewModelName.Contains("Login"))
-            {
-                await Shell.Current.GoToAsync($"//{viewModelName.GetPageName() + "Page"}");
-                return;
-            }
+            bool currentPage = App.Current.MainPage.ToString().Contains("Login") ||
+                               App.Current.MainPage.ToString().Contains("AppShell");
 
             if (initPage && currentPage)
             {
-                //#if ANDROID
-                //                if (Platform.CurrentActivity.CurrentFocus != null)
-                //                    Platform.CurrentActivity.HideKeyboard(Platform.CurrentActivity.CurrentFocus);
-                //#endif
-                await Shell.Current.GoToAsync($"//{viewModelName.GetPageName() + "Page"}");
+                await Shell.Current.GoToAsync(viewModelName.EndsWith("Page")
+                        ? $"//{viewModelName}"
+                        : $"//{viewModelName.GetPageName()}" + "Page",
+                        animate);
                 return;
             };
-
 
             await Shell.Current.GoToAsync(viewModelName.EndsWith("Page") || viewModelName.EndsWith("..")
                         ? viewModelName
@@ -68,7 +59,7 @@ namespace Apps.Modules.Services
         public async Task NavigateToRoot()
            => await Shell.Current.Navigation.PopToRootAsync();
 
-        public async Task NavigateToHome() => App.Current.MainPage = new AppShell();
+        public async Task NavigateToHome() => await Shell.Current.GoToAsync("//HomePage");
 
         public async Task BackTo(string viewModelName)
         {

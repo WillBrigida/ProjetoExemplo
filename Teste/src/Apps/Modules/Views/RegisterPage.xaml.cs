@@ -6,7 +6,7 @@ public partial class RegisterPage : MyContentPage
     {
         InitializeComponent();
         this.BindingContext = VM =
-            Core.CoreHelpers.ServiceProvider.GetRequiredService<Core.Modules.ViewModels.RegisterPageViewModel>();
+            Core.CoreHelpers.ServiceProvider.GetRequiredService<Core.Modules.ViewModels.AccountPageViewModel>();
     }
 
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
+
 #if ANDROID
 using Android.Content.Res;
 #elif IOS || MACCATALYST
@@ -102,23 +103,35 @@ namespace Apps
 
             if (baseUri.Contains("localhost"))
             {
+                var protocol = baseUri.Split("//")[0];
                 var host = baseUri.Split("//")[1];
                 var port = host.Contains(':') ? baseUri.Split(':')[2] : string.Empty;
-                baseUri = AppsHelpers.IsDroid ? $"https://10.0.2.2:{port}" : baseUri;
+                baseUri = AppsHelpers.IsDroid ? $"{protocol}//10.0.2.2:{port}" : baseUri;
+
+                if (protocol.Contains("https"))
+                    builder.Services.AddScoped(sp => new HttpClient(GetPlatformMessageHandler()) { BaseAddress = new Uri(baseUri) });
+                else
+                    builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(baseUri) });
             }
 
-#if DEBUG
+            //#if DEBUG
 
-#if ANDROID
-            builder.Services.AddScoped(sp => new HttpClient(GetPlatformMessageHandler()) { BaseAddress = new Uri(baseUri) });
-#else
-            builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(baseUri) });
-#endif
-#endif
+            //#if ANDROID
+            //            builder.Services.AddScoped(sp => new HttpClient(GetPlatformMessageHandler()) { BaseAddress = new Uri(baseUri) });
+            //#else
+            //            builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(baseUri) });
+            //#endif
+            //#else
+            //            builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(baseUri) });
+
+            //#endif
+
             builder.Services.AddSingleton<Core.Modules.Services.IApiService, Core.Modules.Services.ApiService>();
 
             builder.Services.AddSingleton<Core.Modules.Services.INavigationService, Modules.Services.NavigationService>();
             builder.Services.AddSingleton<Core.Modules.Services.ILocalStorageService, Modules.Services.LocalStorageService>();
+            builder.Services.AddSingleton<Core.Modules.Services.ILauncherService, Modules.Services.LauncherService>();
+
             //builder.Services.AddSingleton<Core.IDeviceInfoService, Modules.Services.DeviceInfoService>();
             builder.Services.AddSingleton<Core.Modules.Services.IAlertService, Modules.Services.AlertService>();
             //builder.Services.AddSingleton<Core.Modules.Services.IFileUploadService, Modules.Services.FileUploadService>();

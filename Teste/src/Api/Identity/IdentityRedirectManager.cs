@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Identity
 {
-    internal sealed class IdentityRedirectManager(
+    public sealed class IdentityRedirectManager(
         NavigationManager navigationManager,
         IHttpContextAccessor httpContextAccessor)
     {

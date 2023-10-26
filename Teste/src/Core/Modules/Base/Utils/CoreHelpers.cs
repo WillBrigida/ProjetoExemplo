@@ -1,11 +1,32 @@
 ﻿using Core.Modules.Models;
+using Core.Modules.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 namespace Core
 {
     public class CoreHelpers
     {
-        public static UserDTO? PrincipalUser { get; internal set; }
+        public static UserDTO? PrincipalUser
+        {
+            get
+            {
+                var _localStorageService = ServiceProvider!.GetRequiredService<ILocalStorageService>();
+
+                var json = _localStorageService!.Get("PrincipalUser", "");
+                return JsonSerializer.Deserialize<UserDTO>(json.ToString());
+
+            }
+            internal set { PrincipalUser = value; }
+        }
+
+        public static void ClearPrincipalUser()
+        {
+            var _localStorageService = ServiceProvider!.GetRequiredService<ILocalStorageService>();
+            _localStorageService!.Remove("PrincipalUser");
+            PrincipalUser = null;
+        }
 
         public static IServiceProvider? ServiceProvider { get; set; }
 

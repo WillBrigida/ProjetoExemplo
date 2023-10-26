@@ -12,7 +12,7 @@
         {
             Routing.RegisterRoute(nameof(Modules.Views.RegisterPage), typeof(Modules.Views.RegisterPage));
             Routing.RegisterRoute(nameof(Modules.Views.LoginPage), typeof(Modules.Views.LoginPage));
-            Routing.RegisterRoute(nameof(Modules.Views.RegisterConfirmationPage), typeof(Modules.Views.RegisterConfirmationPage));
+            Routing.RegisterRoute(nameof(Modules.Views.ConfirmationPage), typeof(Modules.Views.ConfirmationPage));
             Routing.RegisterRoute(nameof(Modules.Views.ForgotPasswordPage), typeof(Modules.Views.ForgotPasswordPage));
 
             //Routing.RegisterRoute(nameof(Modules.Views.HomePage), typeof(Modules.Views.HomePage));

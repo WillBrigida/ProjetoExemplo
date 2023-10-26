@@ -2,6 +2,7 @@
 
 @using System.ComponentModel.DataAnnotations
 @using System.Text
+@using Api.Services
 @using Core.Modules.Models
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
@@ -13,6 +14,7 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject IAccountService AccountService
 
 <PageTitle>Log in</PageTitle>
 
@@ -108,8 +110,11 @@
     public async Task LoginUser()
     {
         // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        // To enable password failures to trigger account lockout, set lockoutOnFailure: true]
+
+        // var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        var result = await AccountService.Login(Input);
+
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
