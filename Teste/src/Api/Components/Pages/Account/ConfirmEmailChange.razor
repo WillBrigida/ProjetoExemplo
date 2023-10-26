@@ -30,6 +30,9 @@
     [SupplyParameterFromQuery]
     private string? Code { get; set; }
 
+    [SupplyParameterFromQuery]
+    private bool IsFrontend { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         if (UserId is null || Email is null || Code is null)
@@ -39,7 +42,9 @@
             return;
         }
 
-        _user = await UserAccessor.GetRequiredUserAsync();
+        _user = IsFrontend 
+            ? await UserManager.FindByIdAsync(UserId) ?? throw new Exception("Error")
+            : await UserAccessor.GetRequiredUserAsync();
 
         var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
         var result = await UserManager.ChangeEmailAsync(_user, Email, code);

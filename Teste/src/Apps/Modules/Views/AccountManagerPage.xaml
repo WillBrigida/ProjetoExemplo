@@ -11,22 +11,78 @@
             Spacing="10"
             VerticalOptions="Center">
 
-            <Entry Placeholder="Email" Text="{Binding RegisterInputModel.Email, Mode=TwoWay}" />
+            <Entry
+                IsReadOnly="True"
+                IsVisible="False"
+                Placeholder="Email"
+                Text="{Binding PrincipalUser.Email, Mode=TwoWay}">
+                <Entry.Triggers>
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Entry"
+                        Value="RegisterNewEmail">
+                        <Setter Property="IsVisible" Value="true" />
+                    </DataTrigger>
+
+                </Entry.Triggers>
+            </Entry>
+
+            <Entry
+                IsVisible="False"
+                Placeholder="Email"
+                Text="{Binding RegisterInputModel.Email, Mode=TwoWay}">
+                <Entry.Triggers>
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Entry"
+                        Value="RegisterNewPassword">
+                        <Setter Property="IsVisible" Value="true" />
+                    </DataTrigger>
+
+                </Entry.Triggers>
+            </Entry>
+
+            <Entry
+                IsVisible="False"
+                Placeholder="Novo email"
+                Text="{Binding NewEmailInputModel.NewEmail, Mode=TwoWay}">
+                <Entry.Triggers>
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Entry"
+                        Value="RegisterNewEmail">
+                        <Setter Property="IsVisible" Value="true" />
+                    </DataTrigger>
+
+                </Entry.Triggers>
+            </Entry>
 
             <Entry
                 IsPassword="True"
+                IsVisible="False"
                 Placeholder="Senha"
                 Text="{Binding RegisterInputModel.Password, Mode=TwoWay}" />
 
             <Entry
                 IsPassword="True"
+                IsVisible="False"
                 Placeholder="Confirmar Senha"
                 Text="{Binding RegisterInputModel.ConfirmPassword, Mode=TwoWay}" />
 
             <Button
                 BackgroundColor="Blue"
-                Command="{Binding RegisterCommand}"
-                Text="Cadastrar" />
+                Command="{Binding AccountManagerCommand}"
+                Text="Cadastrar">
+                <Button.Triggers>
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Button"
+                        Value="RegisterNewEmail">
+                        <Setter Property="Text" Value="Mudar Email" />
+                    </DataTrigger>
+
+                </Button.Triggers>
+            </Button>
 
         </VerticalStackLayout>
     </VerticalStackLayout>

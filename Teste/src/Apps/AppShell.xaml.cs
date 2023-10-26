@@ -14,6 +14,7 @@
             Routing.RegisterRoute(nameof(Modules.Views.LoginPage), typeof(Modules.Views.LoginPage));
             Routing.RegisterRoute(nameof(Modules.Views.ConfirmationPage), typeof(Modules.Views.ConfirmationPage));
             Routing.RegisterRoute(nameof(Modules.Views.ForgotPasswordPage), typeof(Modules.Views.ForgotPasswordPage));
+            Routing.RegisterRoute(nameof(Modules.Views.AccountManagerPage), typeof(Modules.Views.AccountManagerPage));
 
             //Routing.RegisterRoute(nameof(Modules.Views.HomePage), typeof(Modules.Views.HomePage));
 

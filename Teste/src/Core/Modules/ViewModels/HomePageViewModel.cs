@@ -61,42 +61,12 @@ namespace Core.Modules.ViewModels
             }
 
             finally { IsBusy = false; }
-
-            //await _authService!.AuthLogout();
-            //_apiService!.CleanDefaultRequestHeaders();
-            //await _navigationService!.NavigateTo("LoginPage");
         }
 
         [RelayCommand]
-        async Task OnChangeEmail()
+        async Task OnNavToAccountManagerPage()
         {
-            var userId = CoreHelpers.PrincipalUser!.UserID;
-
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<ConfirmEmailModel>>($"{ACCOUNT_ROUTE}/change-email{userId}", PrincipalUser!.Email!);
-                if (!response.Successful)
-                {
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
-                    return;
-                }
-
-                var html =
-                    $"""
-                    <![CDATA[
-                        <p>
-                            {response!.Data!.HtmlMessage}
-                        </p>
-                    ]]>
-                    """;
-
-                await _navigationService!.NavigateTo("RegisterConfirmationPage", "HtmlMessage", html);
-
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-            }
-
-            finally { IsBusy = false; }
+            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", eAccountEditor.RegisterNewEmail);
         }
     }
 }

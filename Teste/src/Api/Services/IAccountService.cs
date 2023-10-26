@@ -14,7 +14,7 @@ namespace Api.Services
         Task<string> Register(ApplicationUser user);
         Task<SignInResult> Login(LoginInputModel loginInput);
         Task<string> ForgotPassword(ApplicationUser user, string? email);
-        Task<string> ChangeEmail(ApplicationUser user, string? email);
+        Task<string> ChangeEmail(ApplicationUser user, string? newEmail);
     }
 
     public class AccountService : IAccountService
@@ -54,7 +54,7 @@ namespace Api.Services
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
             var callbackUrl = _navigationManager.GetUriWithQueryParameters("http://10.0.2.2:5225/Account/ConfirmEmail",
-                new Dictionary<string, object?> { { "userId", userId }, { "code", code }, { "returnUrl", ReturnUrl } });
+                new Dictionary<string, object?> { { "userId", userId }, { "code", code }, { "returnUrl", ReturnUrl } }); //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
 
             return callbackUrl;
         }
@@ -75,33 +75,16 @@ namespace Api.Services
             return callbackUrl;
         }
 
-        public async Task<string> ChangeEmail(ApplicationUser user, string? email)
+        public async Task<string> ChangeEmail(ApplicationUser user, string? newEmail)
         {
-            var changeEmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, email!);
-            changeEmailToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(changeEmailToken));
-            return changeEmailToken;
-        }
+            var userId = await _userManager.GetUserIdAsync(user);
+            var code = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail!);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-        private ApplicationUser CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<ApplicationUser>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                    $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
-            }
-        }
+            var callbackUrl = _navigationManager.GetUriWithQueryParameters($"http://10.0.2.2:5225/Account/ConfirmEmailChange",
+               new Dictionary<string, object?> { { "userId", userId }, { "email", newEmail }, { "code", code }, { "isFrontend", true } }); //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
 
-        private IUserEmailStore<ApplicationUser> GetEmailStore()
-        {
-            if (!_userManager.SupportsUserEmail)
-            {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
-            }
-            return (IUserEmailStore<ApplicationUser>)_userStore;
+            return callbackUrl;
         }
     }
 }

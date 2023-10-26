@@ -54,6 +54,10 @@ namespace Core.Modules.Models
     {
         [Required]
         [EmailAddress]
+        public string? Email { get; set; }
+
+        [Required]
+        [EmailAddress]
         [Display(Name = "New email")]
         public string? NewEmail { get; set; }
     }

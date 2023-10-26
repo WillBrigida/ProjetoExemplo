@@ -15,8 +15,11 @@ namespace Core
                 var _localStorageService = ServiceProvider!.GetRequiredService<ILocalStorageService>();
 
                 var json = _localStorageService!.Get("PrincipalUser", "");
-                return JsonSerializer.Deserialize<UserDTO>(json.ToString());
 
+                if (string.IsNullOrEmpty(json.ToString()))
+                    return new();
+
+                return JsonSerializer.Deserialize<UserDTO>(json.ToString()!);
             }
             internal set { PrincipalUser = value; }
         }

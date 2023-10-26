@@ -10,14 +10,19 @@
         <Label Text="{Binding PrincipalUser.UserID}" />
         <Label Text="{Binding PrincipalUser.Email}" />
 
-        <Button
+        <!--<Button
             BackgroundColor="Blue"
             Command="{Binding ChangeEmailCommand}"
-            Text="Mudar Email" />
+            Text="Mudar Email" />-->
 
         <Button
             BackgroundColor="Red"
             Command="{Binding LogoutCommand}"
             Text="Logout" />
+
+        <Button
+            BackgroundColor="Green"
+            Command="{Binding NavToAccountManagerPageCommand}"
+            Text="Mudar Email" />
     </VerticalStackLayout>
 </views:MyContentPage>

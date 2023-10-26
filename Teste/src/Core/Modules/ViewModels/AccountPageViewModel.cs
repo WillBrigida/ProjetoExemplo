@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Core.Modules.ViewModels
 {
-    public enum eAccountEditor { None, RegisterNewPassword, RegisterNewEmail }
+    public enum eAccountEditor { None, RegisterNewUser, RegisterNewPassword, RegisterNewEmail }
 
     public partial class AccountPageViewModel : BaseViewModel
     {
@@ -20,13 +20,16 @@ namespace Core.Modules.ViewModels
         private readonly ILauncherService? _launcherService;
 
         [ObservableProperty]
+        private UserDTO? _principalUser = new();
+
+        [ObservableProperty]
         private RegisterInputModel? _registerInputModel = new();
 
         [ObservableProperty]
-        private NewEmailInputModel? _newEmailInputModel = new();
+        private LoginInputModel? _loginInputModel = new();
 
         [ObservableProperty]
-        private LoginInputModel? _loginInputModel = new();
+        private NewEmailInputModel? _newEmailInputModel = new();
 
         [ObservableProperty]
         private bool _registerNewPassword;
@@ -36,8 +39,6 @@ namespace Core.Modules.ViewModels
 
         [ObservableProperty]
         private string? _htmlMessage;
-
-        private string? Token { get; set; }
 
         public AccountPageViewModel() { }
 
@@ -56,8 +57,39 @@ namespace Core.Modules.ViewModels
 
         public override Task OnAppearingAsync()
         {
-            HtmlMessage = _navigationService!.GetNavigationParameter<string>("HtmlMessage");
+            AccountEditor = _navigationService!.GetNavigationParameter<eAccountEditor>("AccountEditor");
+
+            if (AccountEditor != eAccountEditor.None)
+            {
+                PrincipalUser = CoreHelpers.PrincipalUser;
+                HtmlMessage = _navigationService!.GetNavigationParameter<string>("HtmlMessage");
+            }
+
             return base.OnAppearingAsync();
+        }
+
+        [RelayCommand]
+        async Task OnRegisterConfirmation(string url)
+        {
+            await _launcherService!.OpenAsync(url);
+            await _navigationService!.NavigateTo("LoginPage");
+
+            //ConfirmEmailModel confirmEmailModel = _navigationService!.GetNavigationParameter<ConfirmEmailModel>("ConfirmEmailModel");
+            //try
+            //{
+            //    IsBusy = true;
+            //    var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/registerconfirmation", confirmEmailModel);
+            //    if (!response.Successful)
+            //    {
+            //        await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}", "Ok");
+            //        return;
+            //    }
+
+            //    await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+            //    await _navigationService!.NavigateTo("LoginPage");
+            //}
+
+            //finally { IsBusy = false; }
         }
 
         [RelayCommand]
@@ -66,19 +98,21 @@ namespace Core.Modules.ViewModels
             try
             {
                 IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<ConfirmEmailModel>>($"{ACCOUNT_ROUTE}/register", RegisterInputModel!);
+                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ACCOUNT_ROUTE}/register", RegisterInputModel!);
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
                     return;
                 }
 
-                var confirmEmailModel = response.Data;
-                confirmEmailModel!.Email = RegisterInputModel!.Email;
-
                 await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                await _navigationService!.NavigateTo("ConfirmationPage", "HtmlMessage", response!.Data!.HtmlMessage);
 
+                Dictionary<string, object> parameters = new()
+                {
+                    { "HtmlMessage", response.Data! },
+                    { "AccountEditor", eAccountEditor.RegisterNewUser }
+                };
+                await _navigationService!.NavigateTo("ConfirmationPage", parameters);
             }
 
             finally { IsBusy = false; }
@@ -110,65 +144,13 @@ namespace Core.Modules.ViewModels
             finally { IsBusy = false; }
         }
 
-
         [RelayCommand]
-        async Task OnRegisterConfirmation(string url)
-        {
-            await _launcherService!.OpenAsync(url);
-            //ConfirmEmailModel confirmEmailModel = _navigationService!.GetNavigationParameter<ConfirmEmailModel>("ConfirmEmailModel");
-            //try
-            //{
-            //    IsBusy = true;
-            //    var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/registerconfirmation", confirmEmailModel);
-            //    if (!response.Successful)
-            //    {
-            //        await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}", "Ok");
-            //        return;
-            //    }
-
-            //    await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-            //    await _navigationService!.NavigateTo("LoginPage");
-            //}
-
-            //finally { IsBusy = false; }
-        }
-
-        [RelayCommand]
-        async Task OnResetPassword()
-        {
-            if (AccountEditor == eAccountEditor.RegisterNewPassword)
-            {
-                await OnRegisterNewPassword();
-                return;
-            }
-
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<ConfirmEmailModel>>($"{ACCOUNT_ROUTE}/forgot-password", RegisterInputModel!.Email);
-                if (!response.Successful)
-                {
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
-                    return;
-                }
-
-                //Token = response.Data!.Token;
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-
-                await _navigationService!.NavigateTo("ConfirmationPage", "HtmlMessage", response!.Data!.HtmlMessage);
-                //AccountEditor = eAccountEditor.RegisterNewPassword;
-                //RegisterNewPassword = true;
-            }
-
-            finally { IsBusy = false; }
-        }
-
-        async Task OnRegisterNewPassword()
+        async Task OnForgotPassword()
         {
             try
             {
                 IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/newpassword/{Token}", RegisterInputModel!);
+                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ACCOUNT_ROUTE}/forgot-password", RegisterInputModel!.Email);
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
@@ -176,10 +158,57 @@ namespace Core.Modules.ViewModels
                 }
 
                 await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                await _navigationService!.NavigateTo("..");
+
+                Dictionary<string, object> parameters = new()
+                {
+                    { "HtmlMessage", response.Data! },
+                    { "AccountEditor", eAccountEditor.RegisterNewPassword }
+                };
+
+                await _navigationService!.NavigateTo("ConfirmationPage", parameters);
             }
 
             finally { IsBusy = false; }
+        }
+
+        [RelayCommand]
+        async Task OnChangeEmail()
+        {
+            var userId = CoreHelpers.PrincipalUser!.UserID;
+            try
+            {
+                IsBusy = true;
+                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ACCOUNT_ROUTE}/change-email{userId}", NewEmailInputModel!.NewEmail);
+                if (!response.Successful)
+                {
+                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
+                    return;
+                }
+
+                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+
+                Dictionary<string, object> parameters = new()
+                {
+                    { "HtmlMessage", response.Data! },
+                    { "AccountEditor", eAccountEditor.RegisterNewEmail }
+                };
+                await _navigationService!.NavigateTo("ConfirmationPage", parameters);
+            }
+
+            finally { IsBusy = false; }
+        }
+
+        [RelayCommand]
+        async Task OnAccountManager()
+        {
+            switch (AccountEditor)
+            {
+                case eAccountEditor.None: break;
+                case eAccountEditor.RegisterNewUser: break;
+                case eAccountEditor.RegisterNewPassword: await OnForgotPassword(); break;
+                case eAccountEditor.RegisterNewEmail: await OnChangeEmail(); break;
+                default: break;
+            }
         }
 
         [RelayCommand]
@@ -191,33 +220,7 @@ namespace Core.Modules.ViewModels
         [RelayCommand]
         async Task OnNavToForgotPasswordPage()
         {
-            await _navigationService!.NavigateTo("ForgotPasswordPage");
-        }
-
-        [RelayCommand]
-        async Task OnChangeEmail()
-        {
-            var userId = CoreHelpers.PrincipalUser!.UserID;
-
-            try
-            {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<ConfirmEmailModel>>($"{ACCOUNT_ROUTE}/change-email{userId}", RegisterInputModel!.Email);
-                if (!response.Successful)
-                {
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
-                    return;
-                }
-
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                await _navigationService!.NavigateTo("ConfirmationPage", "HtmlMessage", response!.Data!.HtmlMessage);
-
-                //RegisterNewPassword = true;
-            }
-
-            finally { IsBusy = false; }
+            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", eAccountEditor.RegisterNewPassword);
         }
     }
-
-
 }
