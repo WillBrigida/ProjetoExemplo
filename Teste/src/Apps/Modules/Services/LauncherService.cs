@@ -6,13 +6,14 @@ namespace Apps.Modules.Services
     {
         public async Task OpenAsync(string url)
         {
-            var newUrl = url.Replace("&amp;", "&");
+            if (url.Contains("&amp;"))
+                url = url.Replace("&amp;", "&");
+
             if (AppsHelpers.IsSimulator && AppsHelpers.IsDroid)
-            {
                 if (url.Contains("localhost"))
-                    newUrl = newUrl.Replace("localhost", "10.0.2.2");
-            }
-            await Launcher.OpenAsync(newUrl);
+                    url = url.Replace("localhost", "10.0.2.2");
+
+            await Launcher.OpenAsync(url);
         }
     }
 }
