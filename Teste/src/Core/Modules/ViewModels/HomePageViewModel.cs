@@ -64,9 +64,9 @@ namespace Core.Modules.ViewModels
         }
 
         [RelayCommand]
-        async Task OnNavToAccountManagerPage()
+        async Task OnNavToAccountManagerPage(eAccountEditor accountEditor)
         {
-            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", eAccountEditor.RegisterNewEmail);
+            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", accountEditor);
         }
     }
 }

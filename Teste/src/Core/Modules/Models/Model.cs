@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Core.Modules.Models
 {
@@ -62,6 +61,25 @@ namespace Core.Modules.Models
         public string? NewEmail { get; set; }
     }
 
+    public class ChangePasswordInputModel
+    {
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Current password")]
+        public string? OldPassword { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "New password")]
+        public string? NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm new password")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string? ConfirmPassword { get; set; }
+    }
+
     public class ConfirmEmailModel
     {
         public string? Email { get; set; }
@@ -86,14 +104,6 @@ namespace Core.Modules.Models
         public byte[]? Data { get; set; }
         public string? FileType { get; set; }
         public long Size { get; set; }
-
     }
 
-    public class NotificationItemMessage : ValueChangedMessage<String>
-    {
-        public NotificationItemMessage(string value) : base(value)
-        {
-
-        }
-    }
 }

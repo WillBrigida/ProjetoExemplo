@@ -1,6 +1,7 @@
 ﻿using Api.Components.Pages.Account;
 using Api.Data;
 using Api.Identity;
+using Core;
 using Core.Modules.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +26,8 @@ namespace Api.Services
         readonly UserManager<ApplicationUser> _userManager;
         readonly NavigationManager _navigationManager;
         readonly IUserStore<ApplicationUser> _userStore;
+
+        static string BaseUri => CoreHelpers.GetSection("BaseUri");
 
 
         [SupplyParameterFromQuery] public string ReturnUrl { get; set; } = "";
@@ -53,7 +56,7 @@ namespace Api.Services
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-            var callbackUrl = _navigationManager.GetUriWithQueryParameters("http://10.0.2.2:5225/Account/ConfirmEmail",
+            var callbackUrl = _navigationManager.GetUriWithQueryParameters($"{BaseUri}/Account/ConfirmEmail",
                 new Dictionary<string, object?> { { "userId", userId }, { "code", code }, { "returnUrl", ReturnUrl } }); //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
 
             return callbackUrl;
@@ -69,7 +72,7 @@ namespace Api.Services
         {
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = _navigationManager.GetUriWithQueryParameters($"http://10.0.2.2:5225/Account/ResetPassword",
+            var callbackUrl = _navigationManager.GetUriWithQueryParameters($"{BaseUri}/Account/ResetPassword",
                 new Dictionary<string, object?> { { "code", code } });  //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
 
             return callbackUrl;
@@ -81,7 +84,7 @@ namespace Api.Services
             var code = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail!);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-            var callbackUrl = _navigationManager.GetUriWithQueryParameters($"http://10.0.2.2:5225/Account/ConfirmEmailChange",
+            var callbackUrl = _navigationManager.GetUriWithQueryParameters($"{BaseUri}/Account/ConfirmEmailChange",
                new Dictionary<string, object?> { { "userId", userId }, { "email", newEmail }, { "code", code }, { "isFrontend", true } }); //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
 
             return callbackUrl;

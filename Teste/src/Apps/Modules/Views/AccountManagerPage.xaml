@@ -20,7 +20,7 @@
                     <DataTrigger
                         Binding="{Binding AccountEditor}"
                         TargetType="Entry"
-                        Value="RegisterNewEmail">
+                        Value="ChangeEmail">
                         <Setter Property="IsVisible" Value="true" />
                     </DataTrigger>
 
@@ -35,7 +35,7 @@
                     <DataTrigger
                         Binding="{Binding AccountEditor}"
                         TargetType="Entry"
-                        Value="RegisterNewPassword">
+                        Value="ForgotPassword">
                         <Setter Property="IsVisible" Value="true" />
                     </DataTrigger>
 
@@ -50,7 +50,7 @@
                     <DataTrigger
                         Binding="{Binding AccountEditor}"
                         TargetType="Entry"
-                        Value="RegisterNewEmail">
+                        Value="ChangeEmail">
                         <Setter Property="IsVisible" Value="true" />
                     </DataTrigger>
 
@@ -60,14 +60,50 @@
             <Entry
                 IsPassword="True"
                 IsVisible="False"
-                Placeholder="Senha"
-                Text="{Binding RegisterInputModel.Password, Mode=TwoWay}" />
+                Placeholder="Senha atual"
+                Text="{Binding ChangePasswordInputModel.OldPassword, Mode=TwoWay}">
+                <Entry.Triggers>
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Entry"
+                        Value="ChangePassword">
+                        <Setter Property="IsVisible" Value="true" />
+                    </DataTrigger>
+
+                </Entry.Triggers>
+            </Entry>
 
             <Entry
                 IsPassword="True"
                 IsVisible="False"
-                Placeholder="Confirmar Senha"
-                Text="{Binding RegisterInputModel.ConfirmPassword, Mode=TwoWay}" />
+                Placeholder="Nova senha"
+                Text="{Binding ChangePasswordInputModel.Password, Mode=TwoWay}">
+                <Entry.Triggers>
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Entry"
+                        Value="ChangePassword">
+                        <Setter Property="IsVisible" Value="true" />
+                    </DataTrigger>
+
+                </Entry.Triggers>
+            </Entry>
+
+            <Entry
+                IsPassword="True"
+                IsVisible="False"
+                Placeholder="Confirmar senha"
+                Text="{Binding ChangePasswordInputModel.ConfirmPassword, Mode=TwoWay}">
+                <Entry.Triggers>
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Entry"
+                        Value="ChangePassword">
+                        <Setter Property="IsVisible" Value="true" />
+                    </DataTrigger>
+
+                </Entry.Triggers>
+            </Entry>
 
             <Button
                 BackgroundColor="Blue"
@@ -77,8 +113,15 @@
                     <DataTrigger
                         Binding="{Binding AccountEditor}"
                         TargetType="Button"
-                        Value="RegisterNewEmail">
+                        Value="ChangeEmail">
                         <Setter Property="Text" Value="Mudar Email" />
+                    </DataTrigger>
+
+                    <DataTrigger
+                        Binding="{Binding AccountEditor}"
+                        TargetType="Button"
+                        Value="ChangePassword">
+                        <Setter Property="Text" Value="Salvar" />
                     </DataTrigger>
 
                 </Button.Triggers>

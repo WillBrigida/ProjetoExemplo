@@ -65,5 +65,7 @@ namespace Core
                 return new ConfigurationBuilder().AddJsonStream(stream!).Build();
             }
         }
+
+        public static string? BaseUri => GetSection("BaseUri");
     }
 }

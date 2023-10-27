@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Core.Modules.ViewModels
 {
-    public enum eAccountEditor { None, RegisterNewUser, RegisterNewPassword, RegisterNewEmail }
+    public enum eAccountEditor { None, RegisterNewUser, ForgotPassword, ChangePassword, ChangeEmail }
 
     public partial class AccountPageViewModel : BaseViewModel
     {
@@ -59,7 +59,7 @@ namespace Core.Modules.ViewModels
         {
             AccountEditor = _navigationService!.GetNavigationParameter<eAccountEditor>("AccountEditor");
 
-            if (AccountEditor != eAccountEditor.None)
+            if (AccountEditor is not eAccountEditor.None)
             {
                 PrincipalUser = CoreHelpers.PrincipalUser;
                 HtmlMessage = _navigationService!.GetNavigationParameter<string>("HtmlMessage");
@@ -162,7 +162,7 @@ namespace Core.Modules.ViewModels
                 Dictionary<string, object> parameters = new()
                 {
                     { "HtmlMessage", response.Data! },
-                    { "AccountEditor", eAccountEditor.RegisterNewPassword }
+                    { "AccountEditor", eAccountEditor.ForgotPassword }
                 };
 
                 await _navigationService!.NavigateTo("ConfirmationPage", parameters);
@@ -190,7 +190,7 @@ namespace Core.Modules.ViewModels
                 Dictionary<string, object> parameters = new()
                 {
                     { "HtmlMessage", response.Data! },
-                    { "AccountEditor", eAccountEditor.RegisterNewEmail }
+                    { "AccountEditor", eAccountEditor.ChangeEmail }
                 };
                 await _navigationService!.NavigateTo("ConfirmationPage", parameters);
             }
@@ -205,8 +205,8 @@ namespace Core.Modules.ViewModels
             {
                 case eAccountEditor.None: break;
                 case eAccountEditor.RegisterNewUser: break;
-                case eAccountEditor.RegisterNewPassword: await OnForgotPassword(); break;
-                case eAccountEditor.RegisterNewEmail: await OnChangeEmail(); break;
+                case eAccountEditor.ForgotPassword: await OnForgotPassword(); break;
+                case eAccountEditor.ChangeEmail: await OnChangeEmail(); break;
                 default: break;
             }
         }
@@ -220,7 +220,7 @@ namespace Core.Modules.ViewModels
         [RelayCommand]
         async Task OnNavToForgotPasswordPage()
         {
-            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", eAccountEditor.RegisterNewPassword);
+            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", eAccountEditor.ForgotPassword);
         }
     }
 }

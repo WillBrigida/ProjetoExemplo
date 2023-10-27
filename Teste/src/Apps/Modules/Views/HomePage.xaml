@@ -3,9 +3,11 @@
     x:Class="Apps.Modules.Views.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:views="clr-namespace:Apps.Modules.Views"
+    xmlns:vm="clr-namespace:Core.Modules.ViewModels;assembly=Core"
     Title="HomePage">
-    <VerticalStackLayout Padding="15" VerticalOptions="Center">
+    <VerticalStackLayout Padding="15" Spacing="10" VerticalOptions="Center">
 
         <Label Text="{Binding PrincipalUser.UserID}" />
         <Label Text="{Binding PrincipalUser.Email}" />
@@ -21,8 +23,16 @@
             Text="Logout" />
 
         <Button
-            BackgroundColor="Green"
+            BackgroundColor="Blue"
             Command="{Binding NavToAccountManagerPageCommand}"
+            CommandParameter="{x:Static vm:eAccountEditor.ChangeEmail}"
             Text="Mudar Email" />
+
+        <Button
+            BackgroundColor="Blue"
+            Command="{Binding NavToAccountManagerPageCommand}"
+            CommandParameter="{x:Static vm:eAccountEditor.ChangePassword}"
+            Text="Mudar Senha" />
+
     </VerticalStackLayout>
 </views:MyContentPage>
