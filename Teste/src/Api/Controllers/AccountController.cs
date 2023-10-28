@@ -258,6 +258,34 @@ namespace Api.Controllers
             }
         }
 
+        [HttpPost("change-password{userId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordInputModel inputModel, string userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+
+                //var changePasswordResult = await _userManager.ChangePasswordAsync(user!, inputModel.OldPassword!, inputModel.NewPassword!);
+                var changePasswordResult = await _accountService.ChangePassword(user!, inputModel);
+                if (!changePasswordResult.Succeeded)
+                {
+                    var _message = $"Error: {string.Join(",", changePasswordResult.Errors.Select(error => error.Description))}";
+                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = _message });
+                }
+
+                await _signInManager.RefreshSignInAsync(user!);
+                _logger.LogInformation("User changed their password successfully.");
+
+                //RedirectManager.RedirectToCurrentPageWithStatus("Your password has been changed");
+                return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Your password has been changed" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
+            }
+        }
+
 
         [HttpGet("confirm-email")]
         [AllowAnonymous]

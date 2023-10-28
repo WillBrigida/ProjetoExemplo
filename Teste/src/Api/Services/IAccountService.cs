@@ -16,6 +16,7 @@ namespace Api.Services
         Task<SignInResult> Login(LoginInputModel loginInput);
         Task<string> ForgotPassword(ApplicationUser user, string? email);
         Task<string> ChangeEmail(ApplicationUser user, string? newEmail);
+        Task<IdentityResult> ChangePassword(ApplicationUser user, ChangePasswordInputModel inputModel);
     }
 
     public class AccountService : IAccountService
@@ -88,6 +89,12 @@ namespace Api.Services
                new Dictionary<string, object?> { { "userId", userId }, { "email", newEmail }, { "code", code }, { "isFrontend", true } }); //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
 
             return callbackUrl;
+        }
+
+        public async Task<IdentityResult> ChangePassword(ApplicationUser user, ChangePasswordInputModel inputModel)
+        {
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user!, inputModel.OldPassword!, inputModel.NewPassword!);
+            return changePasswordResult;
         }
     }
 }

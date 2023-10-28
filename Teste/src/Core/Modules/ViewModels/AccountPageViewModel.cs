@@ -32,6 +32,9 @@ namespace Core.Modules.ViewModels
         private NewEmailInputModel? _newEmailInputModel = new();
 
         [ObservableProperty]
+        private ChangePasswordInputModel? _changePasswordInputModel = new();
+
+        [ObservableProperty]
         private bool _registerNewPassword;
 
         [ObservableProperty]
@@ -178,7 +181,7 @@ namespace Core.Modules.ViewModels
             try
             {
                 IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ACCOUNT_ROUTE}/change-email{userId}", NewEmailInputModel!.NewEmail);
+                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ACCOUNT_ROUTE}/change-email{userId}", NewEmailInputModel!.NewEmail!);
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
@@ -199,6 +202,27 @@ namespace Core.Modules.ViewModels
         }
 
         [RelayCommand]
+        async Task OnChangePassword()
+        {
+            var userId = CoreHelpers.PrincipalUser!.UserID;
+            try
+            {
+                IsBusy = true;
+                var response = await _apiService!.PostAsync<GenericResponse<string>>($"{ACCOUNT_ROUTE}/change-password{userId}", ChangePasswordInputModel!);
+                if (!response.Successful)
+                {
+                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
+                    return;
+                }
+
+                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+                await _navigationService!.NavigateTo("LoginPage");
+            }
+
+            finally { IsBusy = false; }
+        }
+
+        [RelayCommand]
         async Task OnAccountManager()
         {
             switch (AccountEditor)
@@ -207,6 +231,7 @@ namespace Core.Modules.ViewModels
                 case eAccountEditor.RegisterNewUser: break;
                 case eAccountEditor.ForgotPassword: await OnForgotPassword(); break;
                 case eAccountEditor.ChangeEmail: await OnChangeEmail(); break;
+                case eAccountEditor.ChangePassword: await OnChangePassword(); break;
                 default: break;
             }
         }

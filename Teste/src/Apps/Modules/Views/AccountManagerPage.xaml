@@ -77,7 +77,7 @@
                 IsPassword="True"
                 IsVisible="False"
                 Placeholder="Nova senha"
-                Text="{Binding ChangePasswordInputModel.Password, Mode=TwoWay}">
+                Text="{Binding ChangePasswordInputModel.NewPassword, Mode=TwoWay}">
                 <Entry.Triggers>
                     <DataTrigger
                         Binding="{Binding AccountEditor}"
