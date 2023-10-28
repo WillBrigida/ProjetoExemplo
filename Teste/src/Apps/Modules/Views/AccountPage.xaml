@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:MyContentPage
+    x:Class="Apps.Modules.Views.AccountPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:Apps.Modules.Views"
+    xmlns:vm="clr-namespace:Core.Modules.ViewModels;assembly=Core"
+    Title="AccountPage">
+    <VerticalStackLayout
+        Padding="15"
+        Spacing="10"
+        VerticalOptions="Center">
+
+        <Entry
+            IsReadOnly="True"
+            Placeholder="Usuário"
+            Text="{Binding PrincipalUser.UserName, Mode=TwoWay}" />
+
+        <Entry Placeholder="Telefone" Text="{Binding ChangePersonalDataInputModel.PhoneNumber, Mode=TwoWay}" />
+
+        <Button
+            BackgroundColor="Blue"
+            Command="{Binding NavToAccountManagerPageCommand}"
+            CommandParameter="{x:Static vm:eAccountEditor.ChangeEmail}"
+            Text="Mudar Email" />
+
+        <Button
+            BackgroundColor="Blue"
+            Command="{Binding NavToAccountManagerPageCommand}"
+            CommandParameter="{x:Static vm:eAccountEditor.ChangePassword}"
+            Text="Mudar Senha" />
+    </VerticalStackLayout>
+</views:MyContentPage>
