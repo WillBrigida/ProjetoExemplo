@@ -80,6 +80,13 @@ namespace Core.Modules.Models
         public string? ConfirmPassword { get; set; }
     }
 
+    public class ChangePersonalDataInputModel
+    {
+        [Phone]
+        [Display(Name = "Phone number")]
+        public string? PhoneNumber { get; set; }
+    }
+
     public class ConfirmEmailModel
     {
         public string? Email { get; set; }
@@ -90,8 +97,11 @@ namespace Core.Modules.Models
 
     public class UserDTO
     {
+        public bool RememberMe { get; set; }
         public string? UserID { get; set; }
+        public string? UserName { get; set; }
         public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 
     public class SaveFile

@@ -1,4 +1,7 @@
-﻿namespace Apps
+﻿using Core;
+using Core.Modules.Models;
+
+namespace Apps
 {
     public partial class AppShell : Shell
     {
@@ -15,6 +18,7 @@
             Routing.RegisterRoute(nameof(Modules.Views.ConfirmationPage), typeof(Modules.Views.ConfirmationPage));
             Routing.RegisterRoute(nameof(Modules.Views.ForgotPasswordPage), typeof(Modules.Views.ForgotPasswordPage));
             Routing.RegisterRoute(nameof(Modules.Views.AccountManagerPage), typeof(Modules.Views.AccountManagerPage));
+            Routing.RegisterRoute(nameof(Modules.Views.AccountPage), typeof(Modules.Views.AccountPage));
 
             //Routing.RegisterRoute(nameof(Modules.Views.HomePage), typeof(Modules.Views.HomePage));
 
@@ -35,13 +39,18 @@
 
             if (useSpecificpage)
             {
-                Items.Add(new ShellContent
+                UserDTO userDTO = CoreHelpers.PrincipalUser;
+
+                if (!userDTO.RememberMe)
                 {
-                    FlyoutItemIsVisible = false,
-                    Title = nameof(Modules.Views.LoginPage),
-                    Route = nameof(Modules.Views.LoginPage),
-                    ContentTemplate = new DataTemplate(typeof(Modules.Views.LoginPage))
-                });
+                    Items.Add(new ShellContent
+                    {
+                        FlyoutItemIsVisible = false,
+                        Title = nameof(Modules.Views.LoginPage),
+                        Route = nameof(Modules.Views.LoginPage),
+                        ContentTemplate = new DataTemplate(typeof(Modules.Views.LoginPage))
+                    });
+                }
 
                 Items.Add(new ShellContent
                 {

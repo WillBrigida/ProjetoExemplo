@@ -86,7 +86,7 @@ namespace Api.Services
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
             var callbackUrl = _navigationManager.GetUriWithQueryParameters($"{BaseUri}/Account/ConfirmEmailChange",
-               new Dictionary<string, object?> { { "userId", userId }, { "email", newEmail }, { "code", code }, { "isFrontend", true } }); //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
+               new Dictionary<string, object?> { { "userId", userId }, { "email", newEmail }, { "code", code }, { "clientSide", true } }); //TODO: VERIFICAR MELHOR FORMA PARA OBTER BASEURI
 
             return callbackUrl;
         }

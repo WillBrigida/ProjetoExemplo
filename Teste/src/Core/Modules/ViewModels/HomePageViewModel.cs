@@ -46,17 +46,19 @@ namespace Core.Modules.ViewModels
         {
             try
             {
-                IsBusy = true;
-                var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/logout", null);
-                if (!response.Successful)
-                {
-                    //Logica de erro
-                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
-                    return;
-                }
+                CoreHelpers.ClearPrincipalUser();
 
-                _localStorageService!.Remove("PrincipalUser");
-                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+                IsBusy = true;
+                //var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/logout/{userId}", null);
+                //if (!response.Successful)
+                //{
+                //    //Logica de erro
+                //    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
+                //    return;
+                //}
+
+                //await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+                CoreHelpers.ClearPrincipalUser();
                 await _navigationService!.NavigateTo(nameof(LoginPageViewModel));
             }
 
@@ -64,9 +66,9 @@ namespace Core.Modules.ViewModels
         }
 
         [RelayCommand]
-        async Task OnNavToAccountManagerPage(eAccountEditor accountEditor)
+        async Task OnNavToAccoutPage()
         {
-            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", accountEditor);
+            await _navigationService!.NavigateTo("AccountPage", "AccountEditor", eAccountEditor.ChangePersonalData);
         }
     }
 }

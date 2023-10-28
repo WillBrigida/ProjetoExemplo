@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Core.Modules.ViewModels
 {
-    public enum eAccountEditor { None, RegisterNewUser, ForgotPassword, ChangePassword, ChangeEmail }
+    public enum eAccountEditor { None, RegisterNewUser, ForgotPassword, ChangePassword, ChangeEmail, ChangePersonalData }
 
     public partial class AccountPageViewModel : BaseViewModel
     {
@@ -33,6 +33,9 @@ namespace Core.Modules.ViewModels
 
         [ObservableProperty]
         private ChangePasswordInputModel? _changePasswordInputModel = new();
+
+        [ObservableProperty]
+        private ChangePersonalDataInputModel? _changePersonalDataInputModel = new();
 
         [ObservableProperty]
         private bool _registerNewPassword;
@@ -66,8 +69,12 @@ namespace Core.Modules.ViewModels
             {
                 PrincipalUser = CoreHelpers.PrincipalUser;
                 HtmlMessage = _navigationService!.GetNavigationParameter<string>("HtmlMessage");
-            }
 
+                ChangePersonalDataInputModel changePersonalDataInputModel = new();
+                changePersonalDataInputModel.PhoneNumber = CoreHelpers.PrincipalUser!.PhoneNumber;
+
+                ChangePersonalDataInputModel = changePersonalDataInputModel;
+            }
             return base.OnAppearingAsync();
         }
 
@@ -126,6 +133,8 @@ namespace Core.Modules.ViewModels
         {
             try
             {
+                bool remember = LoginInputModel!.RememberMe;
+                LoginInputModel.RememberMe = false;
                 IsBusy = true;
                 var response = await _apiService!.PostAsync<GenericResponse<UserDTO>>($"{ACCOUNT_ROUTE}/login", LoginInputModel!);
                 if (!response.Successful)
@@ -134,6 +143,7 @@ namespace Core.Modules.ViewModels
                     return;
                 }
 
+                response.Data!.RememberMe = remember;
                 var json = JsonSerializer.Serialize(response.Data);
 
                 string value = (string)_localStorageService!.Get("PrincipalUser", "");
@@ -232,6 +242,7 @@ namespace Core.Modules.ViewModels
                 case eAccountEditor.ForgotPassword: await OnForgotPassword(); break;
                 case eAccountEditor.ChangeEmail: await OnChangeEmail(); break;
                 case eAccountEditor.ChangePassword: await OnChangePassword(); break;
+                //case eAccountEditor.ChangePersonalData: await OnChangePersonalData; break;
                 default: break;
             }
         }
@@ -246,6 +257,17 @@ namespace Core.Modules.ViewModels
         async Task OnNavToForgotPasswordPage()
         {
             await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", eAccountEditor.ForgotPassword);
+        }
+
+        [RelayCommand]
+        async Task OnNavToAccountManagerPage(eAccountEditor accountEditor)
+        {
+            await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", accountEditor);
+        }
+
+        public void HandleRememberLogin()
+        {
+            throw new NotImplementedException();
         }
     }
 }

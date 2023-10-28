@@ -42,7 +42,7 @@
     private string? _phoneNumber;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = default!;
+    private Core.Modules.Models.ChangePersonalDataInputModel Input { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,10 +71,10 @@
         RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated");
     }
 
-    private sealed class InputModel
-    {
-        [Phone]
-        [Display(Name = "Phone number")]
-        public string? PhoneNumber { get; set; }
-    }
+    // private sealed class InputModel
+    // {
+    //     [Phone]
+    //     [Display(Name = "Phone number")]
+    //     public string? PhoneNumber { get; set; }
+    // }
 }

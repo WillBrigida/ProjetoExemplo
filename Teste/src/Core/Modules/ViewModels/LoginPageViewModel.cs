@@ -7,7 +7,7 @@ namespace Core.Modules.ViewModels
 {
     public partial class LoginPageViewModel : BaseViewModel
     {
-        const string ROTA_ACESSO = "api/v1/Access";
+        const string ROTA_ACESSO = "api/v1/Account";
 
         private readonly INavigationService? _navigationService;
         private readonly IApiService? _apiService;

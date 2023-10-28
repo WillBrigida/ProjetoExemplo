@@ -31,7 +31,7 @@
     private string? Code { get; set; }
 
     [SupplyParameterFromQuery]
-    private bool IsFrontend { get; set; }
+    private bool ClientSide { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,7 +42,7 @@
             return;
         }
 
-        _user = IsFrontend 
+        _user = ClientSide 
             ? await UserManager.FindByIdAsync(UserId) ?? throw new Exception("Error")
             : await UserAccessor.GetRequiredUserAsync();
 
@@ -63,7 +63,8 @@
             return;
         }
 
-        await SignInManager.RefreshSignInAsync(_user);
+        if (!ClientSide)
+            await SignInManager.RefreshSignInAsync(_user);
         _message = "Thank you for confirming your email change.";
     }
 }

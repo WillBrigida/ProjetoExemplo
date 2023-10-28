@@ -8,4 +8,5 @@ public partial class LoginPage : MyContentPage
         this.BindingContext = VM =
                 Core.CoreHelpers.ServiceProvider.GetRequiredService<Core.Modules.ViewModels.AccountPageViewModel>();
     }
+
 }

@@ -152,7 +152,9 @@ namespace Api.Controllers
                     UserDTO userDTO = new()
                     {
                         UserID = user!.Id,
-                        Email = user.Email
+                        UserName = user.UserName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber
                     };
 
                     return Ok(new GenericResponse<UserDTO> { Successful = true,/* Token = token,*/ Data = userDTO, StatusCode = Ok().StatusCode, Message = inputModel.Email });

@@ -28,7 +28,6 @@ namespace Core
         {
             var _localStorageService = ServiceProvider!.GetRequiredService<ILocalStorageService>();
             _localStorageService!.Remove("PrincipalUser");
-            PrincipalUser = null;
         }
 
         public static IServiceProvider? ServiceProvider { get; set; }
