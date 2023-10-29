@@ -97,43 +97,6 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost("registerconfirmation")]
-        [AllowAnonymous]
-        public async Task<IActionResult> RegisterConfirmation([FromBody] ConfirmEmailModel confirmEmailModel)
-        {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(confirmEmailModel.Email!);
-                if (user == null)
-                {
-                    // Need a way to trigger a 404 from Blazor: https://github.com/dotnet/aspnetcore/issues/45654
-                    //statusMessage = $"Error finding user for unspecified email";
-                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error finding user for unspecified email" });
-
-                }
-                else if (_emailSender is NoOpEmailSender)
-                {
-                    // Once you add a real email sender, you should remove this code that lets you confirm the account
-
-                    var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmEmailModel.Token));
-                    var result = await _userManager.ConfirmEmailAsync(user, code);
-                    if (!result.Succeeded)
-                        return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error confirming your email." });
-
-                    return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Sucesso!" });
-                }
-                else
-                {
-                    return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Email já confirmado!" });
-                }
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
-            }
-        }
-
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginInputModel inputModel)
@@ -157,7 +120,7 @@ namespace Api.Controllers
                         PhoneNumber = user.PhoneNumber
                     };
 
-                    return Ok(new GenericResponse<UserDTO> { Successful = true,/* Token = token,*/ Data = userDTO, StatusCode = Ok().StatusCode, Message = inputModel.Email });
+                    return Ok(new GenericResponse<UserDTO> { Successful = true, Data = userDTO, StatusCode = Ok().StatusCode, Message = inputModel.Email });
 
                     //RedirectManager.RedirectTo(ReturnUrl);
                 }
@@ -177,7 +140,6 @@ namespace Api.Controllers
                 }
                 else
                 {
-                    //errorMessage = "Error: Invalid login attempt.";
                     return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error: Invalid login attempt." });
                 }
             }
@@ -299,96 +261,17 @@ namespace Api.Controllers
                 var result = await _userManager.ConfirmEmailAsync(user, code);
 
                 if (!result.Succeeded)
-                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error confirming your email." });
+                {
+                    identityErrors = result.Errors;
+                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = Message, Error = result.Errors!.ToString()! });
+                }
 
                 return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Thank you for confirming your email." });
             }
 
             catch (Exception ex)
             {
-                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString(), Message = "Error confirming your email." });
-            }
-        }
-
-        [HttpPost("reset-password/{token}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> NewPassword([FromBody] RegisterInputModel inputModel, string? token)
-        {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(inputModel.Email);
-                if (user is null)
-                {
-                    // Don't reveal that the user does not exist
-                    //RedirectManager.RedirectTo("/Account/ResetPasswordConfirmation");
-                    return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Erro, porem não revelar" });
-                }
-
-                var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-
-                var result = await _userManager.ResetPasswordAsync(user, code, inputModel.Password);
-                if (result.Succeeded)
-                {
-                    //RedirectManager.RedirectTo("/Account/ResetPasswordConfirmation");
-                    return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Sucesso, seguir para login" });
-                }
-
-                identityErrors = result.Errors;
-
-                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = identityErrors.ToString(), Message = Message });
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
-            }
-        }
-
-
-
-        [HttpGet("email-confirmation")]
-        [AllowAnonymous]
-        public async Task<IActionResult> CheckEmailConfirmation([FromBody] string email)
-        {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(email);
-                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user!);
-
-                return Ok(new GenericResponse<bool> { Successful = true, StatusCode = Ok().StatusCode, Data = isEmailConfirmed });
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
-            }
-        }
-
-        [HttpPost("confirm-email-change")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailModel confirmEmailModel)
-        {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(confirmEmailModel.Email!);
-                if (user == null)
-                {
-                    // Need a way to trigger a 404 from Blazor: https://github.com/dotnet/aspnetcore/issues/45654
-                    //statusMessage = $"Error finding user for unspecified email";
-                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error finding user for unspecified email" });
-                }
-
-                var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmEmailModel.Token!));
-                var result = await _userManager.ChangeEmailAsync(user, confirmEmailModel.Email!, code);
-                if (!result.Succeeded)
-                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error confirming your email." });
-
-                return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Sucesso!" });
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString() });
+                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString(), Message = Message });
             }
         }
 

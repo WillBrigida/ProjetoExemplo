@@ -13,8 +13,6 @@ namespace Core.Modules.ViewModels
         private readonly INavigationService? _navigationService;
         private readonly IApiService? _apiService;
         private readonly IAlertService? _alertService;
-        private readonly IAuthService? _authService;
-        private readonly ILocalStorageService? _localStorageService;
 
         [ObservableProperty]
         private LoginInputModel? _inputMode = new();
@@ -24,12 +22,13 @@ namespace Core.Modules.ViewModels
 
         public HomePageViewModel() { }
 
-        public HomePageViewModel(IApiService apiService, IAlertService? alertService, INavigationService navigationService, ILocalStorageService? localStorageService)
+        public HomePageViewModel(IApiService apiService,
+                                 IAlertService? alertService,
+                                 INavigationService navigationService)
         {
             _apiService = apiService;
             _alertService = alertService;
             _navigationService = navigationService;
-            _localStorageService = localStorageService;
         }
 
         public override Task OnAppearingAsync()
@@ -39,31 +38,10 @@ namespace Core.Modules.ViewModels
         }
 
         [RelayCommand]
-        public async Task OnLogout()
-        {
-            try
-            {
-                IsBusy = true;
-                //var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/logout/{userId}", null);
-                //if (!response.Successful)
-                //{
-                //    //Logica de erro
-                //    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
-                //    return;
-                //}
-
-                //await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-                CoreHelpers.ClearPrincipalUser();
-                await _navigationService!.NavigateTo("LoginPage");
-            }
-
-            finally { IsBusy = false; }
-        }
+        public async Task OnLogout() => await _navigationService!.NavigateTo("LoginPage");
 
         [RelayCommand]
         async Task OnNavToAccoutPage()
-        {
-            await _navigationService!.NavigateTo("AccountPage", "AccountEditor", eAccountEditor.ChangePersonalData);
-        }
+            => await _navigationService!.NavigateTo("AccountPage", "AccountEditor", eAccountEditor.ChangePersonalData);
     }
 }

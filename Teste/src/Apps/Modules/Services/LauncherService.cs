@@ -11,7 +11,7 @@ namespace Apps.Modules.Services
 
             if (AppsHelpers.IsSimulator)
             {
-                if (url.Contains("localhost"))
+                if (url.Contains("localhost") && AppsHelpers.IsDroid)
                 {
                     url = url.Replace("localhost", "10.0.2.2");
                     //Test Deep link
