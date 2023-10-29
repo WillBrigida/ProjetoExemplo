@@ -288,28 +288,26 @@ namespace Api.Controllers
             }
         }
 
-
-        [HttpGet("confirm-email")]
+        [HttpPost("confirm-email")]
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string? userId, string? code)
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailModel confirmEmailModel)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(userId!);
-                code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+                var user = await _userManager.FindByIdAsync(confirmEmailModel.UserId!);
+                var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmEmailModel.Token));
                 var result = await _userManager.ConfirmEmailAsync(user, code);
 
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("Email validado");
-                }
-            }
-            catch (Exception)
-            {
+                if (!result.Succeeded)
+                    return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Message = "Error confirming your email." });
 
-                throw;
+                return Ok(new GenericResponse { Successful = true, StatusCode = Ok().StatusCode, Message = "Thank you for confirming your email." });
             }
-            return Ok();
+
+            catch (Exception ex)
+            {
+                return BadRequest(new GenericResponse { StatusCode = BadRequest().StatusCode, Error = ex.ToString(), Message = "Error confirming your email." });
+            }
         }
 
         [HttpPost("reset-password/{token}")]

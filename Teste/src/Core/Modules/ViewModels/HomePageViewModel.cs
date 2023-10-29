@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Core.Modules.Base;
 using Core.Modules.Models;
 using Core.Modules.Services;
-using System.Text.Json;
 
 namespace Core.Modules.ViewModels
 {
@@ -35,9 +34,7 @@ namespace Core.Modules.ViewModels
 
         public override Task OnAppearingAsync()
         {
-            var json = _localStorageService!.Get("PrincipalUser", "");
-
-            PrincipalUser = JsonSerializer.Deserialize<UserDTO>(json.ToString());
+            PrincipalUser = CoreHelpers.PrincipalUser;
             return base.OnAppearingAsync();
         }
 
@@ -46,8 +43,6 @@ namespace Core.Modules.ViewModels
         {
             try
             {
-                CoreHelpers.ClearPrincipalUser();
-
                 IsBusy = true;
                 //var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/logout/{userId}", null);
                 //if (!response.Successful)
@@ -59,7 +54,7 @@ namespace Core.Modules.ViewModels
 
                 //await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
                 CoreHelpers.ClearPrincipalUser();
-                await _navigationService!.NavigateTo(nameof(LoginPageViewModel));
+                await _navigationService!.NavigateTo("LoginPage");
             }
 
             finally { IsBusy = false; }

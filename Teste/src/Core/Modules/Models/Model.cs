@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommunityToolkit.Mvvm.Messaging.Messages;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Modules.Models
 {
@@ -114,6 +115,14 @@ namespace Core.Modules.Models
         public byte[]? Data { get; set; }
         public string? FileType { get; set; }
         public long Size { get; set; }
+    }
+
+    public class NotificationItemMessage : ValueChangedMessage<String>
+    {
+        public NotificationItemMessage(string value) : base(value)
+        {
+
+        }
     }
 
 }

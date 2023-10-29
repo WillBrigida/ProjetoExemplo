@@ -9,4 +9,6 @@ public partial class RegisterPage : MyContentPage
             Core.CoreHelpers.ServiceProvider.GetRequiredService<Core.Modules.ViewModels.AccountPageViewModel>();
     }
 
+    protected override void OnAppearing() => base.OnAppearing();
+
 }

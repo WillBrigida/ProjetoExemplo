@@ -61,8 +61,10 @@ namespace Core.Modules.ViewModels
             _launcherService = launcherService;
         }
 
-        public override Task OnAppearingAsync()
+        public override async Task OnAppearingAsync()
         {
+            await base.OnAppearingAsync();
+
             AccountEditor = _navigationService!.GetNavigationParameter<eAccountEditor>("AccountEditor");
 
             if (AccountEditor is not eAccountEditor.None)
@@ -75,7 +77,6 @@ namespace Core.Modules.ViewModels
 
                 ChangePersonalDataInputModel = changePersonalDataInputModel;
             }
-            return base.OnAppearingAsync();
         }
 
         [RelayCommand]
@@ -83,23 +84,6 @@ namespace Core.Modules.ViewModels
         {
             await _launcherService!.OpenAsync(url);
             await _navigationService!.NavigateTo("LoginPage");
-
-            //ConfirmEmailModel confirmEmailModel = _navigationService!.GetNavigationParameter<ConfirmEmailModel>("ConfirmEmailModel");
-            //try
-            //{
-            //    IsBusy = true;
-            //    var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/registerconfirmation", confirmEmailModel);
-            //    if (!response.Successful)
-            //    {
-            //        await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}", "Ok");
-            //        return;
-            //    }
-
-            //    await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
-            //    await _navigationService!.NavigateTo("LoginPage");
-            //}
-
-            //finally { IsBusy = false; }
         }
 
         [RelayCommand]
@@ -248,6 +232,26 @@ namespace Core.Modules.ViewModels
         }
 
         [RelayCommand]
+        async Task OnConfirmEmail(ConfirmEmailModel confirmEmailModel)
+        {
+            try
+            {
+                IsBusy = true;
+                var response = await _apiService!.PostAsync<GenericResponse>($"{ACCOUNT_ROUTE}/confirm-email", confirmEmailModel);
+                if (!response.Successful)
+                {
+                    await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}", "Ok");
+                    return;
+                }
+
+                await _alertService!.ShowAlert("", $"{response.Message}", "Ok");
+                await _navigationService!.NavigateTo("LoginPage");
+            }
+
+            finally { IsBusy = false; }
+        }
+
+        [RelayCommand]
         async Task OnNavToRegisterPage()
         {
             await _navigationService!.NavigateTo("RegisterPage");
@@ -265,9 +269,5 @@ namespace Core.Modules.ViewModels
             await _navigationService!.NavigateTo("AccountManagerPage", "AccountEditor", accountEditor);
         }
 
-        public void HandleRememberLogin()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -21,7 +21,6 @@ namespace Core
 
                 return JsonSerializer.Deserialize<UserDTO>(json.ToString()!);
             }
-            internal set { PrincipalUser = value; }
         }
 
         public static void ClearPrincipalUser()
