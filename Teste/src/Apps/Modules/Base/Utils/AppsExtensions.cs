@@ -52,18 +52,6 @@ namespace Apps
             return builder;
         }
 
-        public static HttpMessageHandler GetPlatformMessageHandler()
-        {
-            //ref:https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services
-            var handler = new Xamarin.Android.Net.AndroidMessageHandler();
-            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-            {
-                if (cert != null && cert.Issuer.Equals("CN=localhost"))
-                    return true;
-                return errors == System.Net.Security.SslPolicyErrors.None;
-            };
-            return handler;
-        }
 
 #elif IOS || MACCATALYST
 
@@ -96,7 +84,38 @@ namespace Apps
 
             return builder;
         }
+
+        public static bool IsHttpsLocalhost(NSUrlSessionHandler sender, string url, Security.SecTrust trust)
+        {
+            if (url.StartsWith("https://localhost"))
+                return true;
+            return false;
+        }
 #endif
+
+        public static HttpMessageHandler GetPlatformMessageHandler()
+        {
+            //ref:https://learn.microsoft.com/en-us/dotnet/maui/data-cloud/local-web-services
+#if ANDROID
+            var handler = new Xamarin.Android.Net.AndroidMessageHandler();
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (cert != null && cert.Issuer.Equals("CN=localhost"))
+                    return true;
+                return errors == System.Net.Security.SslPolicyErrors.None;
+            };
+            return handler;
+#elif IOS
+            var handler = new NSUrlSessionHandler
+            {
+                TrustOverrideForUrl = IsHttpsLocalhost
+            };
+            return handler;
+#else
+     throw new PlatformNotSupportedException("Only Android and iOS supported.");
+#endif
+        }
+
         public static MauiAppBuilder RegisterServices(this MauiAppBuilder builder)
         {
             var baseUri = Core.CoreHelpers.GetSection("BaseUri") ?? throw new ArgumentNullException("Valor não encontrado. Verifique arquivo appsettings.json");
@@ -139,6 +158,8 @@ namespace Apps
 
             return builder;
         }
+
+
     }
 }
 

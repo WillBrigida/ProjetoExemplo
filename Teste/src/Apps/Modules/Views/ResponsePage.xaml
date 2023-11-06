@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Apps.Modules.Views.ResponsePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <Grid
+        Padding="15,-50,15,15"
+        HorizontalOptions="Fill"
+        RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+        RowSpacing="10"
+        VerticalOptions="Center">
+        <Label HorizontalOptions="Center" Text="Icon" />
+        <Label
+            Grid.Row="1"
+            Margin="0,20,0,0"
+            HorizontalOptions="Center"
+            Text="Algo deu errado">
+            <Label.Triggers>
+                <DataTrigger
+                    Binding="{Binding StatusCode}"
+                    TargetType="Label"
+                    Value="-001">
+                    <Setter Property="Text" Value="Sem internet" />
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+        <Label
+            Grid.Row="2"
+            HorizontalOptions="Center"
+            Text="Verifique se os dados estão corretos e tento novamente">
+            <Label.Triggers>
+                <DataTrigger
+                    Binding="{Binding StatusCode}"
+                    TargetType="Label"
+                    Value="-001">
+                    <Setter Property="Text" Value="Verifique sua conexão com a internet e tente novamente" />
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+        <Button
+            Grid.Row="3"
+            Margin="0,20,0,0"
+            Command="{Binding HiddeResultCommand}"
+            HeightRequest="50"
+            Text="Voltar" />
+
+        <Button
+            Grid.Row="4"
+            Margin="0,0,0,0"
+            BackgroundColor="Transparent"
+            TextColor="Blue"
+            Command="{Binding TryAgainCommand}"
+            HeightRequest="50"
+            Text="Tentar novamente" />
+
+    </Grid>
+</ContentView>

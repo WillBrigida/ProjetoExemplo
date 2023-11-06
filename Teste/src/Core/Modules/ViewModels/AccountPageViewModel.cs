@@ -96,6 +96,8 @@ namespace Core.Modules.ViewModels
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
+                    StatusCode = response.StatusCode;
+                    ShowResult = response.Successful;
                     return;
                 }
 
@@ -124,6 +126,8 @@ namespace Core.Modules.ViewModels
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
+                    StatusCode = response.StatusCode;
+                    TryAgain = async _ => await OnLogin();
                     return;
                 }
 
@@ -151,6 +155,8 @@ namespace Core.Modules.ViewModels
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\n\n{response.Error}", "Ok");
+                    StatusCode = response.StatusCode;
+                    ShowResult = response.Successful;
                     return;
                 }
 
@@ -179,6 +185,8 @@ namespace Core.Modules.ViewModels
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
+                    StatusCode = response.StatusCode;
+                    ShowResult = response.Successful;
                     return;
                 }
 
@@ -206,6 +214,8 @@ namespace Core.Modules.ViewModels
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}\nError: {response.Error}", "Ok");
+                    StatusCode = response.StatusCode;
+                    ShowResult = response.Successful;
                     return;
                 }
 
@@ -241,6 +251,7 @@ namespace Core.Modules.ViewModels
                 if (!response.Successful)
                 {
                     await _alertService!.ShowAlert("Error!", $"Descrição: {response.Message}", "Ok");
+                    StatusCode = response.StatusCode;
                     return;
                 }
 

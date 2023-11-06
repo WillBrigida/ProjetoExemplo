@@ -27,6 +27,7 @@ namespace Core
             services.AddTransient<Modules.ViewModels.HomePageViewModel>();
             services.AddTransient<Modules.ViewModels.LoginPageViewModel>();
             services.AddTransient<Modules.ViewModels.RegisterPageViewModel>();
+            //services.AddTransient<Modules.Base.BaseViewModel>();
             //services.A    ddTransient<MaterialDetailPageViewModel>();
             //services.AddTransient<ShopPageViewModel>();
             //services.AddTransient<QRCodePageViewModel>();

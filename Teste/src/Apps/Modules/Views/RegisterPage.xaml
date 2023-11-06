@@ -6,7 +6,8 @@
     xmlns:views="clr-namespace:Apps.Modules.Views"
     Title="RegisterPage"
     Shell.PresentationMode="ModalAnimated">
-    <VerticalStackLayout VerticalOptions="Center">
+    <Grid>
+
         <VerticalStackLayout
             Padding="15"
             Spacing="10"
@@ -30,10 +31,20 @@
                 Command="{Binding RegisterCommand}"
                 Text="Cadastrar" />
 
-            <!--<Button
-        BackgroundColor="Red"
-        Command="{Binding LogoutCommand}"
-        Text="Logout" />-->
         </VerticalStackLayout>
-    </VerticalStackLayout>
+
+        <views:ResponsePage BackgroundColor="Red" IsVisible="false">
+            <views:ResponsePage.Triggers>
+                <DataTrigger
+                    Binding="{Binding Successful}"
+                    TargetType="views:ResponsePage"
+                    Value="false">
+                    <Setter Property="IsVisible" Value="true" />
+                </DataTrigger>
+
+            </views:ResponsePage.Triggers>
+        </views:ResponsePage>
+
+    </Grid>
+
 </views:MyContentPage>

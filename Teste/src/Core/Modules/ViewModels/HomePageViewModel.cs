@@ -38,7 +38,11 @@ namespace Core.Modules.ViewModels
         }
 
         [RelayCommand]
-        public async Task OnLogout() => await _navigationService!.NavigateTo("LoginPage");
+        public async Task OnLogout()
+        {
+            await _navigationService!.NavigateTo("LoginPage");
+            CoreHelpers.ClearPrincipalUser();
+        }
 
         [RelayCommand]
         async Task OnNavToAccoutPage()

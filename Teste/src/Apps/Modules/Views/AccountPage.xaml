@@ -6,28 +6,42 @@
     xmlns:views="clr-namespace:Apps.Modules.Views"
     xmlns:vm="clr-namespace:Core.Modules.ViewModels;assembly=Core"
     Title="AccountPage">
-    <VerticalStackLayout
-        Padding="15"
-        Spacing="10"
-        VerticalOptions="Center">
+    <Grid>
+        <VerticalStackLayout
+            Padding="15"
+            Spacing="10"
+            VerticalOptions="Center">
 
-        <Entry
-            IsReadOnly="True"
-            Placeholder="Usuário"
-            Text="{Binding PrincipalUser.UserName, Mode=TwoWay}" />
+            <Entry
+                IsReadOnly="True"
+                Placeholder="Usuário"
+                Text="{Binding PrincipalUser.UserName, Mode=TwoWay}" />
 
-        <Entry Placeholder="Telefone" Text="{Binding ChangePersonalDataInputModel.PhoneNumber, Mode=TwoWay}" />
+            <Entry Placeholder="Telefone" Text="{Binding ChangePersonalDataInputModel.PhoneNumber, Mode=TwoWay}" />
 
-        <Button
-            BackgroundColor="Blue"
-            Command="{Binding NavToAccountManagerPageCommand}"
-            CommandParameter="{x:Static vm:eAccountEditor.ChangeEmail}"
-            Text="Mudar Email" />
+            <Button
+                BackgroundColor="Blue"
+                Command="{Binding NavToAccountManagerPageCommand}"
+                CommandParameter="{x:Static vm:eAccountEditor.ChangeEmail}"
+                Text="Mudar Email" />
 
-        <Button
-            BackgroundColor="Blue"
-            Command="{Binding NavToAccountManagerPageCommand}"
-            CommandParameter="{x:Static vm:eAccountEditor.ChangePassword}"
-            Text="Mudar Senha" />
-    </VerticalStackLayout>
+            <Button
+                BackgroundColor="Blue"
+                Command="{Binding NavToAccountManagerPageCommand}"
+                CommandParameter="{x:Static vm:eAccountEditor.ChangePassword}"
+                Text="Mudar Senha" />
+        </VerticalStackLayout>
+        <views:ResponsePage BackgroundColor="Red" IsVisible="false">
+            <views:ResponsePage.Triggers>
+                <DataTrigger
+            Binding="{Binding Successful}"
+            TargetType="views:ResponsePage"
+            Value="false">
+                    <Setter Property="IsVisible" Value="true" />
+                </DataTrigger>
+
+            </views:ResponsePage.Triggers>
+        </views:ResponsePage>
+
+    </Grid>
 </views:MyContentPage>

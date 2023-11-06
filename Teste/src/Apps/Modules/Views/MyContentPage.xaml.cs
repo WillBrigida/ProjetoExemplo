@@ -70,6 +70,10 @@ public partial class MyContentPage : ContentPage
     protected override bool OnBackButtonPressed()
     {
         System.Diagnostics.Debug.WriteLine($"==> Botão 'voltar' pressionado");
+
+        if (VM is not null)
+            return VM.OnBackButtonPressed();
+
         return base.OnBackButtonPressed();
     }
 

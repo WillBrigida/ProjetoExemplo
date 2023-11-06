@@ -3,48 +3,138 @@
     x:Class="Apps.Modules.Views.LoginPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:cpnts="clr-namespace:Apps.Modules.Components"
     xmlns:views="clr-namespace:Apps.Modules.Views"
     Title="LoginPage"
     Shell.FlyoutBehavior="Disabled">
-    <VerticalStackLayout
-        Padding="15"
-        Spacing="10"
-        VerticalOptions="Center">
+    <Grid>
 
-        <Entry Placeholder="Email" Text="{Binding LoginInputModel.Email, Mode=TwoWay}" />
+        <VerticalStackLayout
+            Padding="15"
+            Spacing="0"
+            VerticalOptions="Center">
 
-        <Entry
-            IsPassword="True"
-            Placeholder="Senha"
-            Text="{Binding LoginInputModel.Password, Mode=TwoWay}" />
+            <!--  EMAIL  -->
+            <cpnts:EntryComponent
+                Grid.Row="1"
+                Margin="0"
+                EntryComponentIsEnabled="{Binding IsNotBusy}"
+                EntryComponentKeyboard="Email"
+                EntryComponentShowBorrderWhenFocused="True"
+                EntryComponentText="{Binding LoginInputModel.Email, Mode=TwoWay}"
+                EntryComponentTitle="Email"
+                HorizontalOptions="Fill" />
 
-        <CheckBox HorizontalOptions="Start" IsChecked="{Binding LoginInputModel.RememberMe}" />
+            <!--  SENHA  -->
+            <cpnts:EntryComponent
+                Grid.Row="2"
+                Margin="0"
+                EntryComponentIsEnabled="{Binding IsNotBusy}"
+                EntryComponentIsPassword="True"
+                EntryComponentIsValid="True"
+                EntryComponentShowBorrderWhenFocused="True"
+                EntryComponentText="{Binding LoginInputModel.Password, Mode=TwoWay}"
+                EntryComponentTitle="Senha" />
 
-        <Button
-            BackgroundColor="Blue"
-            Command="{Binding LoginCommand, Mode=TwoWay}"
-            Text="Login" />
+            <VerticalStackLayout Grid.Row="3" HorizontalOptions="Fill">
+                <HorizontalStackLayout>
 
-        <HorizontalStackLayout HorizontalOptions="Center" Spacing="7">
+                    <CheckBox
+                        HorizontalOptions="Start"
+                        IsChecked="{Binding LoginInputModel.RememberMe}"
+                        TranslationX="-5"
+                        VerticalOptions="Center"
+                        Color="{StaticResource AccentColor}" />
 
+                    <Label
+                        Grid.Column="0"
+                        FontFamily="PoppinsRegular"
+                        FontSize="15"
+                        LineBreakMode="HeadTruncation"
+                        Text="Manter conectado"
+                        TranslationX="-5"
+                        VerticalOptions="Center" />
+
+                </HorizontalStackLayout>
+
+
+            </VerticalStackLayout>
+
+            <!--  ENTRAR  -->
             <Button
-                BackgroundColor="Transparent"
-                Command="{Binding NavToRegisterPageCommand}"
-                Text="Cadastrar usuário"
-                TextColor="Gray"
-                VerticalOptions="End" />
-
-            <Label Text="|" VerticalOptions="Center" />
-
-            <Button
-                BackgroundColor="Transparent"
-                Command="{Binding NavToForgotPasswordPageCommand}"
-                Text="Esqueci a senha"
-                TextColor="Gray"
-                VerticalOptions="End" />
-
-        </HorizontalStackLayout>
+                Margin="0,17,0,0"
+                Padding="0,0,0,-2"
+                BackgroundColor="{StaticResource AccentColor}"
+                Command="{Binding LoginCommand, Mode=TwoWay}"
+                FontFamily="PoppinsBold"
+                FontSize="16"
+                HeightRequest="45"
+                InputTransparent="{Binding IsBusy}"
+                IsEnabled="{Binding LoginModel.IsValid}"
+                Text="Entrar"
+                TextColor="White" />
 
 
-    </VerticalStackLayout>
+
+            <!--<Entry Placeholder="Email" Text="{Binding LoginInputModel.Email, Mode=TwoWay}" />
+
+            <Entry
+                IsPassword="True"
+                Placeholder="Senha"
+                Text="{Binding LoginInputModel.Password, Mode=TwoWay}" />-->
+
+            <!--<CheckBox HorizontalOptions="Start" IsChecked="{Binding LoginInputModel.RememberMe}" />-->
+
+            <!--<Button
+                BackgroundColor="Blue"
+                Command="{Binding LoginCommand, Mode=TwoWay}"
+                IsEnabled="{Binding IsNotBusy}"
+                Text="Login" />-->
+
+            <HorizontalStackLayout
+                Margin="20,20,20,50"
+                HorizontalOptions="Center"
+                IsVisible="{Binding IsNotBusy}"
+                Spacing="7">
+
+                <Button
+                    BackgroundColor="Transparent"
+                    Command="{Binding NavToRegisterPageCommand}"
+                    Text="Cadastrar usuário"
+                    TextColor="Gray"
+                    VerticalOptions="End" />
+
+                <Label Text="|" VerticalOptions="Center" />
+
+                <Button
+                    BackgroundColor="Transparent"
+                    Command="{Binding NavToForgotPasswordPageCommand}"
+                    Text="Esqueci a senha"
+                    TextColor="Gray"
+                    VerticalOptions="End" />
+
+            </HorizontalStackLayout>
+
+            <ActivityIndicator
+                Margin="10,25"
+                HeightRequest="30"
+                IsRunning="{Binding IsBusy}"
+                VerticalOptions="Start" />
+
+
+        </VerticalStackLayout>
+
+        <views:ResponsePage BackgroundColor="Red" IsVisible="False">
+            <views:ResponsePage.Triggers>
+                <DataTrigger
+                    Binding="{Binding ShowResult}"
+                    TargetType="views:ResponsePage"
+                    Value="true">
+                    <Setter Property="IsVisible" Value="true" />
+                </DataTrigger>
+
+            </views:ResponsePage.Triggers>
+        </views:ResponsePage>
+
+    </Grid>
 </views:MyContentPage>

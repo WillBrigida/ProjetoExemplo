@@ -34,8 +34,7 @@ public class ApiService : IApiService
         if (mock) return await Mock<T>(uri, service);
 
         if (!_connectivityService!.IsConnected())
-            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, Error = "Verifique seu acesso à internete tente novamente" })) ??
-                throw new Exception();
+            return IsNotConnected<T>();
 
         try
         {
@@ -59,8 +58,7 @@ public class ApiService : IApiService
         if (mock) return await Mock<T>(uri);
 
         if (!_connectivityService!.IsConnected())
-            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, Error = "Verifique seu acesso à internete tente novamente" })) ??
-                throw new Exception();
+            return IsNotConnected<T>();
 
         try
         {
@@ -93,8 +91,7 @@ public class ApiService : IApiService
         if (mock) return await Mock<T>(uri);
 
         if (!_connectivityService!.IsConnected())
-            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, Error = "Verifique seu acesso à internete tente novamente" })) ??
-                throw new Exception();
+            return IsNotConnected<T>();
 
         try
         {
@@ -114,9 +111,15 @@ public class ApiService : IApiService
             return result ?? throw new Exception();
 
         }
+
+        catch (TaskCanceledException ex)
+        {
+            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, StatusCode = -002, Error = ex.ToString() })) ??
+                 throw new Exception();
+        }
         catch (Exception ex)
         {
-            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, Error = ex.ToString() })) ??
+            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, StatusCode = -999, Error = ex.ToString() })) ??
                  throw new Exception();
         }
     }
@@ -126,8 +129,7 @@ public class ApiService : IApiService
         if (mock) return await Mock<T>(uri);
 
         if (!_connectivityService!.IsConnected())
-            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, Error = "Verifique seu acesso à internete tente novamente" })) ??
-                throw new Exception();
+            return IsNotConnected<T>();
 
         try
         {
@@ -146,6 +148,10 @@ public class ApiService : IApiService
                  throw new Exception();
         }
     }
+
+    private static T IsNotConnected<T>()
+        => JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new { Successful = false, StatusCode = -001, Error = "Verifique seu acesso à internete tente novamente" })) ??
+                throw new Exception();
 
     private JsonSerializerOptions GetJsonSerializerOptions()
     {
@@ -171,7 +177,6 @@ public class ApiService : IApiService
 
             switch (service)
             {
-
                 default: break;
             }
 

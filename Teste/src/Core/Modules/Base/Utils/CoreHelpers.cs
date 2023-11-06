@@ -14,7 +14,7 @@ namespace Core
             {
                 var _localStorageService = ServiceProvider!.GetRequiredService<ILocalStorageService>();
 
-                var json = _localStorageService!.Get("PrincipalUser", "");
+                var json = _localStorageService!.Get("PrincipalUser", string.Empty);
 
                 if (string.IsNullOrEmpty(json.ToString()))
                     return new();
